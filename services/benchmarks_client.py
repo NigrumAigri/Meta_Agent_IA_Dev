@@ -115,6 +115,10 @@ FALLBACK_19_BENCHMARKS: list[dict[str, Any]] = [
         "tau2": 0.85,
         "speed_tok_s": 49.03,
         "ttft_seconds": 1.18,
+        "price_in_usd": 0.075,
+        "price_out_usd": 0.25,
+        "price_cache_usd": 0.015,
+        "price_blended_usd": 0.12,
         "evaluations": {
             "artificial_analysis_intelligence_index": 57.5,
             "artificial_analysis_coding_index": 71.5,
@@ -329,53 +333,21 @@ class BenchmarksClient:
             except Exception as err:
                 logger.error("Erreur requête Artificial Analysis : %s", err)
 
-        # 2. Récupération des prix OpenRouter en temps réel (Public endpoint)
-        or_models = await openrouter_client.fetch_live_models(force_refresh=True)
-        or_pricing_map: dict[str, dict[str, Any]] = {}
-        for m in or_models:
-            mid = (m.get("id") or "").lower()
-            if mid:
-                or_pricing_map[mid] = {
-                    "id": m.get("id"),
-                    "name": m.get("name"),
-                    "pin": float(m.get("pin", 0.0) or 0.0),
-                    "pout": float(m.get("pout", 0.0) or 0.0),
-                    "pcache": float(m.get("pcache", 0.0) or 0.0),
-                    "context_length": int(m.get("context_length", 128000) or 128000),
-                }
+        # 2. Rafraîchissement automatique du catalogue OpenRouter (Public endpoint)
+        await openrouter_client.fetch_live_models(force_refresh=True)
 
-        # 3. Fusion et réconciliation OpenRouter <-> Artificial Analysis
+        # 3. Ingestion Déterministe et Pure des Modèles Artificial Analysis (100% Direct)
         unified_records: list[dict[str, Any]] = []
 
-        def normalize_str(s: str) -> str:
-            return s.lower().replace("-instruct", "").replace("-preview", "").replace(":free", "").replace(":batch", "").replace(".", "-").replace("_", "-").replace(" ", "-")
-
-        # Map des modèles AA indexés par slug normalisé
-        aa_map: dict[str, dict[str, Any]] = {}
-        for a in aa_models_raw:
-            slug = (a.get("slug") or a.get("id") or "").strip().lower()
-            if slug:
-                aa_map[normalize_str(slug)] = a
-
-        # A. Traitement des modèles issus d'Artificial Analysis
         for a in aa_models_raw:
             slug = a.get("slug") or a.get("id") or "model"
             clean_slug = slug.strip().lower()
-            norm_slug = normalize_str(clean_slug)
 
-            # Trouver le prix OpenRouter correspondant
-            matched_or = None
-            for or_id_clean, or_data in or_pricing_map.items():
-                norm_or = normalize_str(or_id_clean)
-                if norm_slug in norm_or or norm_or in norm_slug:
-                    matched_or = or_data
-                    break
-
-            # Tarifs réels OpenRouter prioritaires
-            p_in = matched_or["pin"] if matched_or else float(a.get("pricing", {}).get("price_1m_input_tokens", 0.0) or 0.0)
-            p_out = matched_or["pout"] if matched_or else float(a.get("pricing", {}).get("price_1m_output_tokens", 0.0) or 0.0)
-            p_cache = matched_or["pcache"] if matched_or else 0.0
-            p_blended = matched_or["pout"] if matched_or else float(a.get("pricing", {}).get("price_1m_blended_3_to_1", 0.0) or 0.0)
+            pricing = a.get("pricing", {}) or {}
+            p_in = float(pricing.get("price_1m_input_tokens", 0.0) or pricing.get("price_input_per_million", 0.0) or 0.0)
+            p_out = float(pricing.get("price_1m_output_tokens", 0.0) or pricing.get("price_output_per_million", 0.0) or 0.0)
+            p_cache = float(pricing.get("price_cache_read_per_million", 0.0) or 0.0)
+            p_blended = float(pricing.get("price_1m_blended_3_to_1", 0.0) or 0.0)
 
             evals = a.get("evaluations", {}) or {}
             creator = a.get("model_creator", {}) or {}

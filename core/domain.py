@@ -352,7 +352,7 @@ class BenchmarkRecord(BaseModel):
     price_cache_usd: float = 0.0
     context_length: int = 128000
     badge: FinOpsBadge = FinOpsBadge.SWEET_SPOT
-    evaluations: dict[str, float] = Field(default_factory=dict)
+    evaluations: dict[str, float | None] = Field(default_factory=dict)
     updated_at: datetime = Field(default_factory=utc_now)
 
 
