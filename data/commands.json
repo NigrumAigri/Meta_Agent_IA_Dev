@@ -1,0 +1,122 @@
+[
+  {
+    "id": "cmd_cadrage",
+    "command": "/cadrage",
+    "name": "Cadrage & Spécifications Inception",
+    "description": "Démarre ou relance le dialogue approfondi d'architecture logicielle avec l'Architecte Lead.",
+    "usage": "/cadrage [reprendre]",
+    "category": "Inception & Cadrage",
+    "handler_type": "native",
+    "target": "cadrage_start",
+    "scope": "global",
+    "is_active": true
+  },
+  {
+    "id": "cmd_benchmarks",
+    "command": "/benchmarks",
+    "name": "Analyse Comparative Artificial Analysis & Top 3 Modèles",
+    "description": "Affiche dans la discussion les 19 benchmarks mondiaux et les 3 profils LLM recommandés (Top Perf, Sweet Spot, Ultra Éco).",
+    "usage": "/benchmarks [role]",
+    "category": "Modèles & Benchmarks",
+    "handler_type": "native",
+    "target": "benchmarks_analysis",
+    "scope": "global",
+    "is_active": true
+  },
+  {
+    "id": "cmd_models",
+    "command": "/models",
+    "name": "Catalogue & Recommandation Modèles IA (19 Benchmarks)",
+    "description": "Affiche le comparatif dynamique des modèles (Sweet Spot, Top Perf, Ultra Éco) avec les scores réels.",
+    "usage": "/models [filtre]",
+    "category": "Modèles & Benchmarks",
+    "handler_type": "native",
+    "target": "benchmarks_analysis",
+    "scope": "global",
+    "is_active": true
+  },
+  {
+    "id": "cmd_match",
+    "command": "/match",
+    "name": "Matching Scientifique de Modèle par Rôle",
+    "description": "Recherche le meilleur modèle pour un rôle spécifique (ex: /match code, /match finance ou /match rédaction).",
+    "usage": "/match <role_ou_mission>",
+    "category": "Modèles & Benchmarks",
+    "handler_type": "native",
+    "target": "benchmarks_analysis",
+    "scope": "global",
+    "is_active": true
+  },
+  {
+    "id": "cmd_audit",
+    "command": "/audit",
+    "name": "Audit Qualité & Score /100",
+    "description": "Déclenche l'évaluation composite complète par le Contrôleur Qualité (AST, Pytest, Pydantic, Structure).",
+    "usage": "/audit [deep]",
+    "category": "Qualité & Audit",
+    "handler_type": "native",
+    "target": "quality_audit",
+    "scope": "global",
+    "is_active": true
+  },
+  {
+    "id": "cmd_rollback",
+    "command": "/rollback",
+    "name": "Time Travel & Restauration Snapshot",
+    "description": "Restaure instantanément le projet à son dernier checkpoint stable validé sans perte de données.",
+    "usage": "/rollback [checkpoint_id]",
+    "category": "Mémoire & Checkpoints",
+    "handler_type": "native",
+    "target": "time_travel_rollback",
+    "scope": "global",
+    "is_active": true
+  },
+  {
+    "id": "cmd_export",
+    "command": "/export",
+    "name": "Export Archive ZIP",
+    "description": "Génère et prépare le package ZIP complet du projet prêt pour la production.",
+    "usage": "/export [zip]",
+    "category": "Production & Déploiement",
+    "handler_type": "native",
+    "target": "project_export_zip",
+    "scope": "global",
+    "is_active": true
+  },
+  {
+    "id": "cmd_budget",
+    "command": "/budget",
+    "name": "Bilan FinOps & Réglage Plafond",
+    "description": "Affiche le bilan FinOps détaillé ou ajuste immédiatement le plafond budgétaire du projet (ex: /budget 25).",
+    "usage": "/budget [montant_usd]",
+    "category": "FinOps & Budget",
+    "handler_type": "native",
+    "target": "finops_summary",
+    "scope": "global",
+    "is_active": true
+  },
+  {
+    "id": "cmd_goal",
+    "command": "/goal",
+    "name": "Mode Autonome Haute Intensité",
+    "description": "Active la boucle autonome d'itération multi-agents jusqu'à accomplissement total de l'objectif.",
+    "usage": "/goal <description_de_l_objectif>",
+    "category": "Orchestration & Workflow",
+    "handler_type": "native",
+    "target": "goal_autonomous_mode",
+    "scope": "global",
+    "is_active": true
+  },
+  {
+    "id": "cmd_clear",
+    "command": "/clear",
+    "name": "Réinitialisation du Fil Actif",
+    "description": "Vide et archive les messages du fil de discussion courant pour repartir sur un contexte neuf.",
+    "usage": "/clear",
+    "category": "Gestion de Contexte",
+    "handler_type": "native",
+    "target": "clear_active_thread",
+    "scope": "global",
+    "is_active": true
+  }
+]

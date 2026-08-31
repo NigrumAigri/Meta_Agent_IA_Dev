@@ -1,0 +1,41 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "meta-agent-dev"
+version = "5.0.0"
+description = "Meta Developer Agent v5.0.0 — Enterprise Edition (Command Center 3 Volets & Visual Flow n8n)"
+authors = ["Meta Agent Team <contact@meta-agent.dev>"]
+license = "Proprietary"
+readme = "README.md"
+packages = [
+    { include = "api" },
+    { include = "core" },
+    { include = "services" },
+    { include = "storage" },
+]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<4.0"
+fastapi = ">=0.115.0"
+uvicorn = { extras = ["standard"], version = ">=0.32.0" }
+pydantic = ">=2.10.0"
+httpx = ">=0.28.0"
+python-dotenv = ">=1.0.0"
+openpyxl = ">=3.1.0"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=8.0.0"
+pytest-asyncio = ">=0.24.0"
+
+[tool.poetry.scripts]
+meta-agent = "run:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+norecursedirs = ["output_projects", "data", ".venv", "venv"]
+asyncio_mode = "auto"
+
+

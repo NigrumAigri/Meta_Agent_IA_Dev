@@ -1,0 +1,21 @@
+# Fichiers et dossiers à exclure du contexte de build Docker
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+.git/
+.gitignore
+.env
+.venv/
+venv/
+ENV/
+env/
+scratch/
+output_projects/*
+!output_projects/.gitkeep
+*.log
+.DS_Store
+Thumbs.db

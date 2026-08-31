@@ -1,0 +1,98 @@
+[
+  {
+    "id": "hook_pre_tool_security",
+    "name": "Vérification Sécurité Pré-Outil (Moindre Privilège)",
+    "description": "Intercepte tout appel d'outil avant son exécution pour bloquer les traversées de répertoire ('../'), les fichiers système critiques et les injections de commandes.",
+    "event_type": "pre_tool_call",
+    "action_type": "security_validator",
+    "target": "validate_tool_call_permissions",
+    "config": {
+      "strict_privilege": true,
+      "blocked_path_patterns": ["..", "/etc/", "C:\\Windows", ".env", "id_rsa"]
+    },
+    "scope": "global",
+    "is_active": true
+  },
+  {
+    "id": "hook_post_tool_ast",
+    "name": "Validation Syntaxique AST Post-Écriture de Code",
+    "description": "Exécute en mémoire un parseur syntaxique AST déterministe sur 100% des fichiers Python générés ou modifiés pour certifier 0% d'erreur de syntaxe.",
+    "event_type": "post_tool_call",
+    "action_type": "ast_validator",
+    "target": "validate_generated_code_ast",
+    "config": {
+      "auto_format": true,
+      "enforce_strict_pydantic": true
+    },
+    "scope": "global",
+    "is_active": true
+  },
+  {
+    "id": "hook_pre_llm_budget_guard",
+    "name": "Garde-Fou Budgétaire Pré-LLM (FinOps Circuit Breaker)",
+    "description": "Vérifie avant chaque appel réseau LLM que le projet n'a pas dépassé son plafond budgétaire autorisé.",
+    "event_type": "pre_llm_call",
+    "action_type": "finops_circuit_breaker",
+    "target": "check_pre_llm_budget",
+    "config": {
+      "hard_stop_on_limit": true
+    },
+    "scope": "global",
+    "is_active": true
+  },
+  {
+    "id": "hook_post_llm_finops_recorder",
+    "name": "Télémétrie & Enregistrement FinOps Post-LLM",
+    "description": "Capture immédiatement les tokens in/out réels, la latence et le coût en USD pour alimenter le grand livre FinOps sans perte de métrique.",
+    "event_type": "post_llm_call",
+    "action_type": "telemetry_logger",
+    "target": "record_llm_usage_telemetry",
+    "config": {
+      "record_latency": true,
+      "log_to_console": false
+    },
+    "scope": "global",
+    "is_active": true
+  },
+  {
+    "id": "hook_budget_threshold",
+    "name": "Surveillance des Seuils Budgétaires (80% Alerte & 100% Hard Stop)",
+    "description": "Surveille en temps réel la consommation cumulée. Déclenche un avertissement à 80% du budget et coupe l'exécution à 100%.",
+    "event_type": "on_budget_threshold",
+    "action_type": "finops_circuit_breaker",
+    "target": "check_project_budget_limit",
+    "config": {
+      "alert_at_percent": 80.0,
+      "hard_stop_at_percent": 100.0
+    },
+    "scope": "global",
+    "is_active": true
+  },
+  {
+    "id": "hook_on_error_retry",
+    "name": "Gestionnaire de 3 Retries Déterministes avec Backoff",
+    "description": "Intercepte les erreurs réseau transitoires et gère automatiquement 3 retries avec backoff exponentiel déterministe.",
+    "event_type": "on_error",
+    "action_type": "retry_manager",
+    "target": "handle_exponential_retries",
+    "config": {
+      "max_retries": 3,
+      "backoff_seconds": 2.0
+    },
+    "scope": "global",
+    "is_active": true
+  },
+  {
+    "id": "hook_post_checkpoint_snapshot",
+    "name": "Génération Automatique de Snapshot Time Travel",
+    "description": "Capture un instantané d'état SQLite atomique après chaque étape majeure pour permettre à l'utilisateur de restaurer ou remonter le temps.",
+    "event_type": "post_checkpoint",
+    "action_type": "snapshot_creator",
+    "target": "create_atomic_checkpoint",
+    "config": {
+      "auto_prune_keep_last": 10
+    },
+    "scope": "global",
+    "is_active": true
+  }
+]

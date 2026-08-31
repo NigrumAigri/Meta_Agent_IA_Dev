@@ -1,0 +1,30 @@
+services:
+  meta-agent-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: meta-agent-dev:v5.0.0
+    container_name: meta_agent_dev_v5
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    volumes:
+      - ./data:/app/data
+      - ./output_projects:/app/output_projects
+      - ./.env:/app/.env:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PORT=8000
+      - HOST=0.0.0.0
+    deploy:
+      resources:
+        limits:
+          cpus: "${DOCKER_CPUS:-4.0}"
+          memory: "${DOCKER_MEM_LIMIT:-4g}"
+        reservations:
+          cpus: "0.5"
+          memory: "256M"
+    security_opt:
+      - no-new-privileges:true

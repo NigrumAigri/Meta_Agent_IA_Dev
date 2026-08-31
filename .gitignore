@@ -1,0 +1,65 @@
+# ==============================================================================
+# META DEVELOPER AGENT v5.0.0 — .gitignore Professionnel & Sécurisé
+# ==============================================================================
+
+# 1. Environnements & Secrets (JAMAIS sur Git)
+.env
+.env.local
+.env.*.local
+*.env.backup
+!*.env.example
+
+# 2. Python, Bytecode & Compilations
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+build/
+dist/
+*.egg-info/
+
+# 3. Environnements Virtuels & Poetry
+.venv/
+venv/
+ENV/
+env/
+.poetry/
+
+# 4. Tests, Couverture & Métriques
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+
+# 5. Base de Données Runtime SQLite & Caches
+data/*.db
+data/*.db-journal
+data/*.db-wal
+data/*.db-shm
+!data/agents/
+!data/commands.json
+!data/hooks.json
+
+# 6. Dossiers de Sortie & Projets Clients Générés
+output_projects/*
+!output_projects/.gitkeep
+scratch/
+*.log
+
+# 7. IDE & Fichiers Système d'Exploitation
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
