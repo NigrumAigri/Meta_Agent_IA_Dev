@@ -39,9 +39,13 @@ class OpenRouterClient:
         self._last_fetch_time: float = 0.0
         self._cache_ttl_seconds: float = 900.0
 
+    def get_api_key(self) -> str | None:
+        """Récupère la clé API OpenRouter de façon dynamique JIT depuis settings ou SQLite."""
+        return settings.get_llm_api_key()
+
     @property
     def is_configured(self) -> bool:
-        return bool(settings.llm_api_key and settings.llm_api_key.strip())
+        return bool(self.get_api_key())
 
     async def fetch_live_models(self, force_refresh: bool = False) -> list[dict[str, Any]]:
         """Récupère la totalité du catalogue des modèles OpenRouter (400+ modèles) et synchronise avec SQLite."""
@@ -49,9 +53,10 @@ class OpenRouterClient:
         if not force_refresh and self._cached_models and (now - self._last_fetch_time < self._cache_ttl_seconds):
             return self._cached_models
 
+        api_key = self.get_api_key()
         headers: dict[str, str] = {}
-        if settings.llm_api_key:
-            headers["Authorization"] = f"Bearer {settings.llm_api_key}"
+        if api_key:
+            headers["Authorization"] = f"Bearer {api_key}"
 
         # 1. Tentative d'interrogation de l'API OpenRouter
         try:
@@ -132,9 +137,10 @@ class OpenRouterClient:
 
         # 3. Interrogation en direct d'OpenRouter
         try:
+            api_key = self.get_api_key()
             headers = {}
-            if settings.llm_api_key:
-                headers["Authorization"] = f"Bearer {settings.llm_api_key}"
+            if api_key:
+                headers["Authorization"] = f"Bearer {api_key}"
             async with httpx.AsyncClient(timeout=10.0) as client:
                 res = await client.get(f"{settings.llm_base_url}/models", headers=headers)
                 if res.status_code == 200:
@@ -208,8 +214,9 @@ class OpenRouterClient:
     ) -> tuple[str, FinOpsMetric, str]:
         """Génère une réponse complète et enregistre la métrique FinOps dans SQLite."""
         selected_model = model or settings.llm_discovery_model
+        api_key = self.get_api_key()
 
-        if not self.is_configured:
+        if not api_key:
             fallback_text = (
                 "Mode Local : Clé API OpenRouter non configurée. "
                 "Veuillez renseigner votre clé dans les paramètres pour activer les inférences en direct."
@@ -244,7 +251,7 @@ class OpenRouterClient:
             payload["reasoning"] = {"effort": reasoning_effort}
 
         headers = {
-            "Authorization": f"Bearer {settings.llm_api_key}",
+            "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
             "HTTP-Referer": "https://meta-agent-v5.internal",
             "X-Title": "Meta Developer Agent v5 Enterprise",
@@ -361,8 +368,9 @@ class OpenRouterClient:
     ) -> AsyncGenerator[dict[str, Any], None]:
         """Générateur SSE mot par mot avec détection des reasoning_tokens."""
         selected_model = model or settings.llm_discovery_model
+        api_key = self.get_api_key()
 
-        if not self.is_configured:
+        if not api_key:
             yield {
                 "type": "content",
                 "delta": "Mode Local : Veuillez configurer votre clé API OpenRouter dans l'onglet Configuration.",
@@ -382,7 +390,7 @@ class OpenRouterClient:
             payload["reasoning"] = {"effort": reasoning_effort}
 
         headers = {
-            "Authorization": f"Bearer {settings.llm_api_key}",
+            "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
             "HTTP-Referer": "https://meta-agent-v5.internal",
             "X-Title": "Meta Developer Agent v5 Enterprise",

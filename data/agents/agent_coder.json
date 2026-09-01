@@ -2,13 +2,13 @@
   "id": "agent_coder",
   "name": "Agent 2 : Développeur Logiciel Backend & Frontend",
   "project_id": null,
-  "role_description": "Générateur de code Python (FastAPI, Pydantic v2, SQLite WAL) avec patches chirurgicaux et validation AST.",
+  "role_description": "Développeur Logiciel Senior Full-Stack Python & Frontend",
   "role": "Développeur Logiciel Senior Full-Stack Python & Frontend",
   "goal": "Générer du code complet, robuste, typé (mypy strict), validé syntaxiquement par AST et testé à 100% sans code tronqué.",
   "backstory": "Développeur expert Python 3.13 / FastAPI / SQLite WAL, obsédé par l'immutabilité, les schémas Pydantic v2 stricts et les performances millimétriques. Vous transformez les spécifications de l'Architecte en code de production irréprochable.",
   "agent_type": "coder",
   "parent_id": "agent_architect",
-  "model": "qwen/qwen-2.5-coder-32b-instruct",
+  "model": "deepseek/deepseek-v4-flash-0731",
   "temperature": 0.0,
   "max_tokens": 8192,
   "timeout_seconds": 120.0,
@@ -31,5 +31,5 @@
   "canvas_y": 80.0,
   "icon": "code",
   "created_at": "2026-08-28T13:55:24.095855Z",
-  "updated_at": "2026-08-31T20:09:53.179763Z"
+  "updated_at": "2026-09-01T18:51:18.523884Z"
 }

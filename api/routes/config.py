@@ -34,22 +34,25 @@ def mask_key(key: str | None) -> str | None:
 
 @router.get("", response_model=dict[str, Any])
 def get_system_config():
-    """Récupère l'état actuel de la configuration et des connexions externes."""
+    """Récupère l'état actuel de la configuration et des connexions externes avec synchronisation dynamique."""
+    cfg = reload_settings()
+    llm_key = cfg.get_llm_api_key()
+    aa_key = cfg.get_aa_api_key()
     return {
-        "llm_provider": settings.llm_provider,
-        "llm_base_url": settings.llm_base_url,
-        "llm_api_key_masked": mask_key(settings.llm_api_key),
-        "is_openrouter_connected": settings.is_openrouter_connected,
-        "artificial_analysis_key_masked": mask_key(settings.artificial_analysis_api_key),
-        "is_artificial_analysis_live": settings.is_artificial_analysis_live,
-        "llm_discovery_model": settings.llm_discovery_model,
-        "llm_coder_model": settings.llm_coder_model,
-        "server_port": settings.server_port,
-        "db_path": str(settings.db_path),
-        "ast_validation_enabled": settings.ast_validation_enabled,
-        "hitl_validation_enabled": settings.hitl_validation_enabled,
-        "circuit_breaker_enabled": settings.circuit_breaker_enabled,
-        "prompt_caching_enabled": settings.prompt_caching_enabled,
+        "llm_provider": cfg.llm_provider,
+        "llm_base_url": cfg.llm_base_url,
+        "llm_api_key_masked": mask_key(llm_key),
+        "is_openrouter_connected": bool(llm_key),
+        "artificial_analysis_key_masked": mask_key(aa_key),
+        "is_artificial_analysis_live": bool(aa_key),
+        "llm_discovery_model": cfg.llm_discovery_model,
+        "llm_coder_model": cfg.llm_coder_model,
+        "server_port": cfg.server_port,
+        "db_path": str(cfg.db_path),
+        "ast_validation_enabled": cfg.ast_validation_enabled,
+        "hitl_validation_enabled": cfg.hitl_validation_enabled,
+        "circuit_breaker_enabled": cfg.circuit_breaker_enabled,
+        "prompt_caching_enabled": cfg.prompt_caching_enabled,
     }
 
 
@@ -112,7 +115,7 @@ async def check_openrouter_key(key: str | None) -> dict[str, Any]:
     import time
     import httpx
 
-    target_key = (key.strip() if key else None) or settings.llm_api_key
+    target_key = (key.strip() if key and key.strip() else None) or settings.get_llm_api_key()
     if not target_key or target_key.startswith("your_") or len(target_key) < 8:
         return {
             "status": "error",
@@ -182,7 +185,7 @@ async def check_aa_key(key: str | None) -> dict[str, Any]:
     import time
     import httpx
 
-    target_key = (key.strip() if key else None) or settings.artificial_analysis_api_key
+    target_key = (key.strip() if key and key.strip() else None) or settings.get_aa_api_key()
     if not target_key or target_key.startswith("your_") or len(target_key) < 5:
         return {
             "status": "not_configured",

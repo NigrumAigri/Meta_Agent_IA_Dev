@@ -2,13 +2,13 @@
   "id": "agent_architect",
   "name": "Agent 1 : Architecte & Cadrage (Lead Tech & CTO)",
   "project_id": null,
-  "role_description": "Directeur Technique & Stratège en Architecture Logicielle Distribuée, Clean Architecture et Modélisation LEGO Multi-Agents.",
+  "role_description": "Lead Tech & Architecte Cloud Senior",
   "role": "Lead Tech & Architecte Cloud Senior",
   "goal": "Concevoir des architectures découplées 100% conformes",
   "backstory": "15 ans d'expérience en Clean Architecture",
   "agent_type": "architect",
   "parent_id": null,
-  "model": "z-ai/glm-5.3-flash",
+  "model": "deepseek/deepseek-v4-flash-0731",
   "temperature": 0.1,
   "max_tokens": 4096,
   "timeout_seconds": 120.0,
@@ -32,5 +32,5 @@
   "canvas_y": 140.0,
   "icon": "compass",
   "created_at": "2026-08-28T13:55:24.095819Z",
-  "updated_at": "2026-08-31T21:59:06.565561Z"
+  "updated_at": "2026-09-01T19:10:59.090004Z"
 }

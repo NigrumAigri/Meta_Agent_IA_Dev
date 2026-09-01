@@ -94,19 +94,67 @@ class Settings:
 
     @property
     def is_openrouter_connected(self) -> bool:
-        return bool(self.llm_api_key)
+        return bool(self.get_llm_api_key())
 
     @property
     def is_artificial_analysis_live(self) -> bool:
-        return bool(self.artificial_analysis_api_key)
+        return bool(self.get_aa_api_key())
+
+    def get_llm_api_key(self) -> str | None:
+        """Retourne la clé API OpenRouter avec résolution dynamique JIT depuis SQLite."""
+        if self.llm_api_key and self.llm_api_key.strip():
+            return self.llm_api_key.strip()
+        try:
+            import sqlite3
+            if self.db_path.exists():
+                conn = sqlite3.connect(str(self.db_path), timeout=3.0)
+                conn.row_factory = sqlite3.Row
+                cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='system_settings';")
+                if cursor.fetchone():
+                    row = conn.execute("SELECT value FROM system_settings WHERE key='llm_api_key' LIMIT 1;").fetchone()
+                    if row and row["value"]:
+                        val = row["value"].strip()
+                        self.llm_api_key = val
+                        conn.close()
+                        return val
+                conn.close()
+        except Exception:
+            pass
+        return os.getenv("META_LLM_API_KEY") or None
+
+    def get_aa_api_key(self) -> str | None:
+        """Retourne la clé API Artificial Analysis avec résolution dynamique JIT depuis SQLite."""
+        if self.artificial_analysis_api_key and self.artificial_analysis_api_key.strip():
+            return self.artificial_analysis_api_key.strip()
+        try:
+            import sqlite3
+            if self.db_path.exists():
+                conn = sqlite3.connect(str(self.db_path), timeout=3.0)
+                conn.row_factory = sqlite3.Row
+                cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='system_settings';")
+                if cursor.fetchone():
+                    row = conn.execute("SELECT value FROM system_settings WHERE key='artificial_analysis_api_key' LIMIT 1;").fetchone()
+                    if row and row["value"]:
+                        val = row["value"].strip()
+                        self.artificial_analysis_api_key = val
+                        conn.close()
+                        return val
+                conn.close()
+        except Exception:
+            pass
+        return os.getenv("META_ARTIFICIAL_ANALYSIS_API_KEY") or os.getenv("ARTIFICIAL_ANALYSIS_API_KEY") or None
+
+
+# Instance de démarrage initial
+settings: Settings = Settings.from_environment()
 
 
 def reload_settings() -> Settings:
     """Force le rechargement du fichier .env et des paramètres dynamiques SQLite."""
     global settings
-    current_db_path = settings.db_path
-    current_output_dir = settings.output_dir
-    current_data_dir = settings.data_dir
+    current_db_path = getattr(settings, "db_path", None)
+    current_output_dir = getattr(settings, "output_dir", None)
+    current_data_dir = getattr(settings, "data_dir", None)
     load_env_file(V5_ROOT_DIR / ".env")
     new_s = Settings.from_environment()
     if current_db_path:
@@ -183,5 +231,5 @@ def update_env_variable(key: str, value: str | None) -> None:
     reload_settings()
 
 
-# Singleton global
-settings = Settings.from_environment()
+# Initialisation active complète au chargement du module
+reload_settings()
