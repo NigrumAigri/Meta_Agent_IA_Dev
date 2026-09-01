@@ -1,0 +1,45 @@
+# Journal des Modifications (CHANGELOG) — Meta Developer Agent
+
+Toutes les modifications notables apportées à ce projet sont documentées dans ce fichier, conformément aux principes de [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/) et du [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [5.0.1] - 2026-09-01
+
+### 🚀 Améliorations & Nouvelles Fonctionnalités
+- **Standard Universel de Conception d'Agents IA (`rules/standard_conception_agent_profile.md`)** :
+  - Intégration de la synthèse exhaustive des **13 modules de la Base de Connaissances RAG** en un contrat d'exécution impératif et généraliste.
+  - Typologie universelle des intentions cognitives (Déterministe stricte, Analyse critique, Cadrage stratégique, Conversation support, Créativité).
+  - Grammaire XML en 5 blocs délimités (`<role_and_identity>`, `<operational_protocol>`, `<output_specifications>`, `<strict_guardrails>`, `<tooling_and_collaboration>`).
+  - Grille de validation en 12 points de contrôle pour l'audit automatique des sous-agents.
+  - Synchronisation et indexation automatique dans la table SQLite `rules_index`.
+
+---
+
+### 🐛 Corrections de Bugs & Résilience
+- **Résolution Dynamique JIT des Clés API (`core/config.py`, `services/openrouter_client.py`, `api/routes/config.py`)** :
+  - Élimination de la désynchronisation mémoire vive (RAM) vs SQLite : les clés API enregistrées en base sont détectées et utilisées instantanément sans redémarrage serveur.
+  - Ajout des méthodes `get_llm_api_key()` et `get_aa_api_key()` pour une résolution dynamique transparente à la volée.
+  - Correction de l'endpoint `POST /api/v1/config/test-connection` : teste automatiquement la clé enregistrée en base si le champ du formulaire est masqué (`••••••••`).
+- **Ingestion Pure & Déterministe des Benchmarks AA (`services/benchmarks_client.py`)** :
+  - Éradication totale du matching flou sur les slugs de modèles (`or_pricing_map`).
+  - Extraction 100% directe des prix et métriques certifiées depuis le payload officiel d'Artificial Analysis.
+  - Rétablissement des vrais prix constructeurs (`GLM-5.3 Max` à In: \$1.40 / Out: \$4.40 vs `GLM-5.3 Flash` à In: \$0.15 / Out: \$0.50).
+- **Tolérance aux Métriques Optionnelles (`core/domain.py`)** :
+  - Mise à jour du schéma Pydantic `BenchmarkRecord.evaluations` en `dict[str, float | None]` pour tolérer les scores `null` renvoyés par l'API externe.
+
+---
+
+### 🧪 Tests & Certification
+- **Suite de Tests Complète** : **114 / 114 tests réussis (100% PASS)** en 4.5s.
+- **Conformité Clean Architecture** : Zéro hardcoding, isolation hermétique multi-projets, respect des 7 Piliers Agentiques.
+
+---
+
+## [5.0.0] - 2026-08-31
+
+### 🎉 Version Initiale v5.0.0 Enterprise Command Center
+- Architecture Bi-Niveau (Méta-Agents v5 ➔ Sous-Agents de projets isolés).
+- Command Center interactif avec Canvas 2D DAG, Chat SSE temps réel et Explorateur de code.
+- Les 7 Piliers Agentiques (MCP Hub, Skills RAG JIT, Rules Directives, Hooks Sentinelles, Slash Commands, Mémoire Épisodique & Lessons, Checkpoints & Time Travel).
+- Moteur FinOps avec disjoncteur budgétaire à 90% et isolation SQLite WAL.
