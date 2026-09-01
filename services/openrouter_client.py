@@ -214,9 +214,7 @@ class OpenRouterClient:
     ) -> tuple[str, FinOpsMetric, str]:
         """Génère une réponse complète et enregistre la métrique FinOps dans SQLite."""
         selected_model = model or settings.llm_discovery_model
-        api_key = self.get_api_key()
-
-        if not api_key:
+        if not self.is_configured:
             fallback_text = (
                 "Mode Local : Clé API OpenRouter non configurée. "
                 "Veuillez renseigner votre clé dans les paramètres pour activer les inférences en direct."
@@ -238,9 +236,10 @@ class OpenRouterClient:
                 ttft_ms=5,
                 status="local_fallback",
             )
-            finops_repo.record_inference(metric)
+            # Ne pas enregistrer de fausse transaction en base lors d'un repli local sans appel API
             return fallback_text, metric, "stop"
 
+        api_key = self.get_api_key()
         payload: dict[str, Any] = {
             "model": selected_model,
             "messages": messages,
@@ -368,9 +367,7 @@ class OpenRouterClient:
     ) -> AsyncGenerator[dict[str, Any], None]:
         """Générateur SSE mot par mot avec détection des reasoning_tokens."""
         selected_model = model or settings.llm_discovery_model
-        api_key = self.get_api_key()
-
-        if not api_key:
+        if not self.is_configured:
             yield {
                 "type": "content",
                 "delta": "Mode Local : Veuillez configurer votre clé API OpenRouter dans l'onglet Configuration.",
@@ -378,6 +375,7 @@ class OpenRouterClient:
             yield {"type": "finish", "finish_reason": "stop"}
             return
 
+        api_key = self.get_api_key()
         payload: dict[str, Any] = {
             "model": selected_model,
             "messages": messages,

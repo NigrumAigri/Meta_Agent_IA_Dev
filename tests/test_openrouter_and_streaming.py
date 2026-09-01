@@ -21,11 +21,8 @@ def test_openrouter_offline_deterministic_fallback():
             assert "Mode Local" in content
             assert finish_reason == "stop"
             assert metric.agent_id == "agent_architect"
-
-            # Vérifier l'enregistrement dans SQLite
-            ledger = finops_repo.list_all()
-            assert len(ledger) > 0
-            assert any(m.task_name == "Inférence" for m in ledger)
+            assert metric.cost_usd == 0.0
+            assert metric.status == "local_fallback"
 
     asyncio.run(runner())
 

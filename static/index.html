@@ -3745,7 +3745,7 @@
                     <th style="padding:8px 10px">Projet / Studio</th>
                     <th style="padding:8px 10px">Agent & Rôle</th>
                     <th style="padding:8px 10px">Modèle IA</th>
-                    <th style="padding:8px 10px;text-align:right">Jetons</th>
+                    <th style="padding:8px 10px;text-align:right">Jetons (In / Out)</th>
                     <th style="padding:8px 10px;text-align:right">Coût ($)</th>
                     <th style="padding:8px 10px;text-align:right">Temps (ms)</th>
                   </tr>
@@ -11423,7 +11423,15 @@
               <td style="padding:8px 10px;font-weight:500">${esc(tx.project_name || 'Studio Méta-Agents')}</td>
               <td style="padding:8px 10px" class="mono"><span class="chip" style="font-size:10.5px;padding:2px 6px">${esc(formatAgentRole(tx.agent_name))}</span></td>
               <td style="padding:8px 10px" class="mono mut2">${esc(tx.model)}</td>
-              <td style="padding:8px 10px;text-align:right" class="mono">${int((tx.prompt_tokens || 0) + (tx.completion_tokens || 0))}</td>
+              <td style="padding:8px 10px;text-align:right" class="mono">
+                <div style="font-weight:600">${int((tx.prompt_tokens || 0) + (tx.completion_tokens || 0))}</div>
+                <div style="font-size:10px;color:#71717A;margin-top:2px;display:flex;justify-content:flex-end;gap:4px;white-space:nowrap">
+                  <span style="color:#60A5FA" title="Jetons d'Entrée (Prompt In)">↓ ${int(tx.prompt_tokens || 0)}</span>
+                  <span>·</span>
+                  <span style="color:#A78BFA" title="Jetons de Sortie (Génération Out)">↑ ${int(tx.completion_tokens || 0)}</span>
+                  ${tx.reasoning_tokens ? `<span>·</span><span style="color:#F59E0B" title="Jetons de Pensée / Raisonnement">⚡ ${int(tx.reasoning_tokens)}</span>` : ''}
+                </div>
+              </td>
               <td style="padding:8px 10px;text-align:right;color:#22C55E;font-weight:600" class="mono">${money(tx.cost_usd || 0)}</td>
               <td style="padding:8px 10px;text-align:right" class="mono mut2">${Math.round(tx.latency_ms || 0)} ms</td>
             </tr>

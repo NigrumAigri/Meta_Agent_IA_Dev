@@ -179,15 +179,18 @@ def get_finops_summary():
         {
             "id": m.id,
             "timestamp": m.timestamp.isoformat() if hasattr(m, "timestamp") and m.timestamp else "",
+            "project_id": m.project_id,
             "project_name": project_id_to_name.get(m.project_id, "Studio"),
+            "agent_id": m.agent_id,
             "agent_name": agent_id_to_name.get(m.agent_id, m.agent_name or m.agent_id),
             "model": m.model or "moonshotai/kimi-k3",
             "prompt_tokens": m.prompt_tokens,
             "completion_tokens": m.completion_tokens,
+            "reasoning_tokens": m.reasoning_tokens,
             "cost_usd": m.cost_usd,
             "latency_ms": m.latency_ms,
         }
-        for m in reversed(all_metrics[-15:])
+        for m in reversed(all_metrics[-20:])
     ]
 
     total_budget = sum(p.budget_limit_usd for p in all_projects) if all_projects else 0.0
