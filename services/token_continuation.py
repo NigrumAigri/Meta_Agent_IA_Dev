@@ -82,7 +82,7 @@ class TokenContinuationMiddleware:
             prompt_tokens=total_prompt_tokens,
             completion_tokens=total_completion_tokens,
             reasoning_tokens=total_reasoning_tokens,
-            total_tokens=total_prompt_tokens + total_completion_tokens + total_reasoning_tokens,
+            total_tokens=total_prompt_tokens + total_completion_tokens,
             cost_usd=round(total_cost_usd, 6),
             latency_ms=total_latency_ms,
             ttft_ms=int(total_latency_ms * 0.2),

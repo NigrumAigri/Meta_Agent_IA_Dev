@@ -11349,17 +11349,19 @@
       let filteredTokens = data.total_tokens || 0;
       let filteredIn = data.total_input_tokens || 0;
       let filteredOut = data.total_output_tokens || 0;
-      let filteredCache = data.total_cached_tokens || 0;
+      let filteredReasoning = data.total_cached_tokens || 0;
       let filteredCalls = data.total_calls || 0;
 
       if (isFiltered) {
         filteredCost = txs.reduce((acc, t) => acc + (t.cost_usd || 0), 0);
         filteredIn = txs.reduce((acc, t) => acc + (t.prompt_tokens || 0), 0);
         filteredOut = txs.reduce((acc, t) => acc + (t.completion_tokens || 0), 0);
-        filteredCache = txs.reduce((acc, t) => acc + (t.reasoning_tokens || 0), 0);
+        filteredReasoning = txs.reduce((acc, t) => acc + (t.reasoning_tokens || 0), 0);
         filteredTokens = filteredIn + filteredOut;
         filteredCalls = txs.length;
       }
+
+      const filteredPureOut = Math.max(0, filteredOut - filteredReasoning);
 
       // Affichage des KPIs
       const costEl = $('#gf-total-cost'); if (costEl) costEl.textContent = money(filteredCost);
@@ -11373,8 +11375,8 @@
         return num.toString();
       };
       const tkInEl = $('#gf-tk-in'); if (tkInEl) tkInEl.textContent = `In: ${fmtTk(filteredIn)}`;
-      const tkOutEl = $('#gf-tk-out'); if (tkOutEl) tkOutEl.textContent = `Out: ${fmtTk(filteredOut)}`;
-      const tkCacheEl = $('#gf-tk-cache'); if (tkCacheEl) tkCacheEl.textContent = `Cache: ${fmtTk(filteredCache)}`;
+      const tkOutEl = $('#gf-tk-out'); if (tkOutEl) tkOutEl.textContent = `Out: ${fmtTk(filteredPureOut)}`;
+      const tkCacheEl = $('#gf-tk-cache'); if (tkCacheEl) tkCacheEl.textContent = filteredReasoning > 0 ? `🧠: ${fmtTk(filteredReasoning)}` : `Cache: 0`;
       const callsEl = $('#gf-total-calls'); if (callsEl) callsEl.textContent = int(filteredCalls);
 
       // Calcul Budget & Disjoncteur (Multi-Projets vs Projet Dédié)
@@ -11417,25 +11419,31 @@
         if (txs.length === 0) {
           txTbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:#71717A">Aucune transaction trouvée pour ces critères de filtre</td></tr>`;
         } else {
-          txTbody.innerHTML = txs.map(tx => `
+          txTbody.innerHTML = txs.map(tx => {
+            const pTok = tx.prompt_tokens || 0;
+            const rTok = tx.reasoning_tokens || 0;
+            const cTok = Math.max(0, (tx.completion_tokens || 0) - rTok);
+            const totTok = (tx.total_tokens || 0) || (pTok + (tx.completion_tokens || 0));
+            return `
             <tr style="border-bottom:1px solid #1E1E22">
               <td style="padding:8px 10px" class="mono mut2">${tx.timestamp ? tx.timestamp.replace('T', ' ').slice(0, 19) : 'Live'}</td>
               <td style="padding:8px 10px;font-weight:500">${esc(tx.project_name || 'Studio Méta-Agents')}</td>
               <td style="padding:8px 10px" class="mono"><span class="chip" style="font-size:10.5px;padding:2px 6px">${esc(formatAgentRole(tx.agent_name))}</span></td>
               <td style="padding:8px 10px" class="mono mut2">${esc(tx.model)}</td>
               <td style="padding:8px 10px;text-align:right" class="mono">
-                <div style="font-weight:600">${int((tx.prompt_tokens || 0) + (tx.completion_tokens || 0))}</div>
-                <div style="font-size:10px;color:#71717A;margin-top:2px;display:flex;justify-content:flex-end;gap:4px;white-space:nowrap">
-                  <span style="color:#60A5FA" title="Jetons d'Entrée (Prompt In)">↓ ${int(tx.prompt_tokens || 0)}</span>
+                <div style="font-weight:600">${int(totTok)}</div>
+                <div style="font-size:10px;color:#71717A;margin-top:2px;display:flex;justify-content:flex-end;gap:4px;white-space:nowrap;align-items:center">
+                  <span style="color:#60A5FA" title="Jetons d'Entrée (Prompt In)">↓ ${int(pTok)}</span>
                   <span>·</span>
-                  <span style="color:#A78BFA" title="Jetons de Sortie (Génération Out)">↑ ${int(tx.completion_tokens || 0)}</span>
-                  ${tx.reasoning_tokens ? `<span>·</span><span style="color:#F59E0B" title="Jetons de Pensée / Raisonnement">⚡ ${int(tx.reasoning_tokens)}</span>` : ''}
+                  <span style="color:#A78BFA" title="Jetons de Sortie (Génération Visible Out)">↑ ${int(cTok)}</span>
+                  ${rTok > 0 ? `<span>·</span><span style="color:#F43F5E;font-weight:600;display:inline-flex;align-items:center;gap:2px" title="Jetons de Pensée & Raisonnement (Reasoning)">🧠 ${int(rTok)}</span>` : ''}
                 </div>
               </td>
               <td style="padding:8px 10px;text-align:right;color:#22C55E;font-weight:600" class="mono">${money(tx.cost_usd || 0)}</td>
               <td style="padding:8px 10px;text-align:right" class="mono mut2">${Math.round(tx.latency_ms || 0)} ms</td>
             </tr>
-          `).join('');
+          `;
+          }).join('');
         }
       }
     }

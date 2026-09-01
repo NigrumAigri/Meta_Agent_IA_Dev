@@ -99,7 +99,7 @@ def get_finops_summary():
     total_in = sum(m.prompt_tokens for m in all_metrics)
     total_out = sum(m.completion_tokens for m in all_metrics)
     total_cache = sum(m.reasoning_tokens for m in all_metrics)
-    total_tokens = total_in + total_out + total_cache
+    total_tokens = total_in + total_out
     total_calls = len(all_metrics)
 
     # 1. Ventilation par Projet

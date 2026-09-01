@@ -10,7 +10,8 @@ Toutes les modifications notables apportées à ce projet sont documentées dans
 - **Facturation FinOps 100% Réelle OpenRouter (`services/openrouter_client.py`)** :
   - Extraction directe du champ `usage["cost"]` renvoyé par OpenRouter au centième de centime près, éliminant tout décalage entre la plateforme locale et le tableau de bord OpenRouter.
   - Support de `stream_options: {"include_usage": True}` en streaming SSE pour capter les métriques réelles de tokens et de coût en direct.
-  - Découpage visuel enrichi des jetons dans le Grand Livre : Total, <span style="color:#60A5FA">↓ In</span>, <span style="color:#A78BFA">↑ Out</span> et <span style="color:#F59E0B">⚡ Reasoning</span>.
+  - Découpage visuel enrichi et déterministe des jetons : Total exact, <span style="color:#60A5FA">↓ In</span>, <span style="color:#A78BFA">↑ Out pur</span> (déduction des tokens de réflexion) et <span style="color:#F43F5E">🧠 Reasoning</span> (icône cerveau).
+  - Élimination du double comptage des tokens de réflexion dans le calcul du total.
   - Correction du filtrage multi-projets dans le Centre des Dépenses avec réinjection de `project_id`.
   - Suppression de l'enregistrement de fausses transactions en cas de repli local hors-ligne.
 - **Standard Universel de Conception d'Agents IA (`rules/standard_conception_agent_profile.md`)** :

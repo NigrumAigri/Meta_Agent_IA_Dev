@@ -302,7 +302,7 @@ class OpenRouterClient:
                     usage.get("completion_tokens_details", {}).get("reasoning_tokens")
                     or usage.get("reasoning_tokens", 0)
                 )
-                t_tokens = usage.get("total_tokens", p_tokens + c_tokens + r_tokens)
+                t_tokens = usage.get("total_tokens", p_tokens + c_tokens)
 
                 # 1. Facturation 100% exacte en direct depuis OpenRouter
                 raw_cost = usage.get("cost")
