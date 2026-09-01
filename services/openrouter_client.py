@@ -298,22 +298,30 @@ class OpenRouterClient:
                 usage = data.get("usage", {})
                 p_tokens = usage.get("prompt_tokens", 0)
                 c_tokens = usage.get("completion_tokens", 0)
-                r_tokens = usage.get("reasoning_tokens", 0)
+                r_tokens = (
+                    usage.get("completion_tokens_details", {}).get("reasoning_tokens")
+                    or usage.get("reasoning_tokens", 0)
+                )
                 t_tokens = usage.get("total_tokens", p_tokens + c_tokens + r_tokens)
 
-                # Résolution exacte des tarifs du modèle depuis SQLite
-                pin, pout, _ = self.get_model_pricing(selected_model)
-                cost_calc = mcp_hub.execute_tool(
-                    "finops_calculator",
-                    {
-                        "prompt_tokens": p_tokens,
-                        "completion_tokens": c_tokens,
-                        "reasoning_tokens": r_tokens,
-                        "price_in_usd": pin,
-                        "price_out_usd": pout,
-                    },
-                )
-                cost_usd = cost_calc.get("cost_usd", 0.0)
+                # 1. Facturation 100% exacte en direct depuis OpenRouter
+                raw_cost = usage.get("cost")
+                if raw_cost is not None and isinstance(raw_cost, (int, float)) and raw_cost >= 0:
+                    cost_usd = float(raw_cost)
+                else:
+                    # Repli dynamique basé sur le catalogue réel du modèle si non fourni
+                    pin, pout, _ = self.get_model_pricing(selected_model)
+                    cost_calc = mcp_hub.execute_tool(
+                        "finops_calculator",
+                        {
+                            "prompt_tokens": p_tokens,
+                            "completion_tokens": c_tokens,
+                            "reasoning_tokens": r_tokens,
+                            "price_in_usd": pin,
+                            "price_out_usd": pout,
+                        },
+                    )
+                    cost_usd = cost_calc.get("cost_usd", 0.0)
 
                 metric = FinOpsMetric(
                     agent_id=agent_id,
@@ -383,6 +391,7 @@ class OpenRouterClient:
             "max_tokens": max_tokens,
             "stream": True,
             "include_reasoning": True,
+            "stream_options": {"include_usage": True},
         }
         if reasoning_effort and reasoning_effort != "none":
             payload["reasoning"] = {"effort": reasoning_effort}
@@ -434,6 +443,10 @@ class OpenRouterClient:
                             # 3. Fin de génération
                             if choice.get("finish_reason"):
                                 yield {"type": "finish", "finish_reason": choice["finish_reason"]}
+
+                            # 4. Capture de l'usage réel et du coût exact en streaming
+                            if "usage" in chunk and chunk["usage"]:
+                                yield {"type": "usage", "usage": chunk["usage"]}
                         except Exception:
                             continue
         except Exception as e:
