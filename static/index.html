@@ -2882,35 +2882,6 @@
     }
 
     /* ---------- topbar badges (fintech & intelligence) ---------- */
-    .chip-cost {
-      height: 19px;
-      padding: 0 6.5px;
-      font-size: 10.5px;
-      font-weight: 600;
-      font-family: var(--mono);
-      color: #10B981;
-      background: rgba(16, 185, 129, 0.10);
-      border: 1px solid rgba(16, 185, 129, 0.28);
-      border-radius: 5px;
-      transition: all .2s ease;
-      display: inline-flex;
-      align-items: center;
-    }
-    .chip-cost:hover {
-      background: rgba(16, 185, 129, 0.18);
-      border-color: rgba(16, 185, 129, 0.45);
-    }
-    .chip-cost.cost-warning {
-      color: #F59E0B;
-      background: rgba(245, 158, 11, 0.12);
-      border-color: rgba(245, 158, 11, 0.35);
-    }
-    .chip-cost.cost-danger {
-      color: #EF4444;
-      background: rgba(239, 68, 68, 0.14);
-      border-color: rgba(239, 68, 68, 0.45);
-      animation: pulse-danger 2s infinite;
-    }
 
     .chip-decisions {
       height: 19px;
@@ -3448,7 +3419,6 @@
             title="Centre des Dépenses & Suivi Budgétaire" style="height:28px;padding:0 8px;border-radius:6px;gap:6px;flex-shrink:0;">
             <svg class="ic-s" style="color:#10B981"><use href="#i-wallet" /></svg>
             <span class="topbar-hide-md" style="font-size:11.5px;font-weight:500;color:var(--txt-dim)">Dépenses & Budget</span>
-            <span class="chip-cost mono" id="topbar-cost-display">$ 0.00</span>
           </button>
           <button class="btn btn-ghost" id="btn-open-approvals"
             title="Centre de validation et d'arbitrage global" style="height:28px;padding:0 8px;border-radius:6px;gap:5px;flex-shrink:0;">
@@ -11139,25 +11109,6 @@
         console.debug('Télémétrie FinOps en attente ou hors ligne:', err);
       }
 
-      const topbarCostEl = $('#topbar-cost-display');
-      if (topbarCostEl) {
-        const costVal = state.telem.cost || 0;
-        topbarCostEl.textContent = money(costVal);
-        const budgetLimit = (state.activeProject && state.activeProject.budget_limit_usd) ? state.activeProject.budget_limit_usd : 0;
-        if (budgetLimit > 0) {
-          const ratio = costVal / budgetLimit;
-          if (ratio >= 0.8) {
-            topbarCostEl.className = 'chip-cost mono cost-danger';
-          } else if (ratio >= 0.5) {
-            topbarCostEl.className = 'chip-cost mono cost-warning';
-          } else {
-            topbarCostEl.className = 'chip-cost mono';
-          }
-        } else {
-          topbarCostEl.className = 'chip-cost mono';
-        }
-      }
-
       if ($('#cost')) $('#cost').textContent = money(state.telem.cost || 0);
       const sc = $('#sess-cost');
       if (sc) sc.textContent = money(state.telem.cost || 0);
@@ -11227,12 +11178,6 @@
       const data = await api('/finops/summary');
       if (!data) return;
       rawGlobalFinOps = data;
-
-      // Mettre à jour le badge du haut
-      const topbarCostEl = $('#topbar-cost-display');
-      if (topbarCostEl) {
-        topbarCostEl.textContent = money(data.total_cost_usd || 0);
-      }
 
       // Initialiser les options des filtres
       populateFinOpsFilterDropdowns(data);
