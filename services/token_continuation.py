@@ -52,7 +52,7 @@ class TokenContinuationMiddleware:
                 task_name=f"{task_name} (Partie {continuation_count + 1})",
             )
 
-            full_content += content
+            full_content += (content or "")
             total_prompt_tokens += metric.prompt_tokens
             total_completion_tokens += metric.completion_tokens
             total_reasoning_tokens += metric.reasoning_tokens

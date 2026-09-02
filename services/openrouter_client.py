@@ -292,7 +292,7 @@ class OpenRouterClient:
 
                 data = res.json()
                 choice = data.get("choices", [{}])[0]
-                content = choice.get("message", {}).get("content", "")
+                content = choice.get("message", {}).get("content") or ""
                 finish_reason = choice.get("finish_reason", "stop")
 
                 usage = data.get("usage", {})
