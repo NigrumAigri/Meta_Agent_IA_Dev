@@ -1653,7 +1653,32 @@
       width: 3600px;
       height: 2400px;
       overflow: visible;
-      pointer-events: none
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .canvas-layer-badges {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .canvas-layer-nodes {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .wires-draft {
+      position: absolute;
+      inset: 0;
+      width: 3600px;
+      height: 2400px;
+      overflow: visible;
+      pointer-events: none;
+      z-index: 70 !important;
     }
 
     .node {
@@ -1671,11 +1696,12 @@
       touch-action: none;
       cursor: grab;
       isolation: isolate;
-      z-index: 2;
+      z-index: 10;
+      pointer-events: auto;
     }
 
     .node:hover {
-      z-index: 8;
+      z-index: 18;
     }
 
     .node.active {
@@ -1711,7 +1737,7 @@
       border-color: #22C55E !important;
       box-shadow: 0 0 0 1px #22C55E, 0 0 18px rgba(34, 197, 94, 0.35) !important;
       animation: nodeMicroPop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) 1 forwards;
-      z-index: 25 !important;
+      z-index: 30 !important;
     }
 
     .node.off {
@@ -1952,7 +1978,7 @@
       padding: 0;
       cursor: pointer;
       transition: all .18s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 100;
+      z-index: 5;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -3535,6 +3561,7 @@
         </div>
         <div class="stage" id="stage">
           <div class="world" id="world">
+            <!-- Calque 1 : Câbles & flux de fond (z-index: 1) -->
             <svg class="wires" id="wires">
               <defs>
                 <marker id="wire-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
@@ -3545,10 +3572,15 @@
                 </marker>
               </defs>
               <g id="wire-g"></g>
+            </svg>
+            <!-- Calque 2 : Badges de liaisons & symboles hiérarchiques (z-index: 5, sous les cartes) -->
+            <div id="wire-badges" class="canvas-layer-badges"></div>
+            <!-- Calque 3 : Cartes d'agents (z-index: 10 à 50, recouvrent câbles et badges) -->
+            <div id="nodes" class="canvas-layer-nodes"></div>
+            <!-- Calque 4 : Câble interactif en cours de tirage (z-index: 70) -->
+            <svg class="wires wires-draft" id="wires-draft-svg">
               <path id="wire-draft" class="wpath-draft" d="" style="display:none"></path>
             </svg>
-            <div id="nodes"></div>
-            <div id="wire-badges" style="position:absolute;inset:0;pointer-events:none;z-index:90"></div>
           </div>
           <div style="position:absolute;left:12px;bottom:12px" class="row gap2">
             <span class="chip mono" id="canvas-status-chip">Graphe · 5 agents · 4 liaisons actives</span>
@@ -7597,8 +7629,11 @@
           updateSelectionUI();
 
           // Élévation dynamique au premier plan de la hiérarchie visuelle
-          state.canvasMaxZIndex = (state.canvasMaxZIndex || 25) + 1;
+          state.canvasMaxZIndex = Math.max(state.canvasMaxZIndex || 30, 30) + 1;
           node.style.zIndex = state.canvasMaxZIndex;
+          if (node.parentNode) {
+            node.parentNode.appendChild(node);
+          }
 
           const sx = e.clientX / state.zoom;
           const sy = e.clientY / state.zoom;

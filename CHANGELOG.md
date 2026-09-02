@@ -15,10 +15,12 @@ Toutes les modifications notables apportées à ce projet sont documentées dans
   - Épuration de la topbar : retrait du compteur flottant de dépenses (`#topbar-cost-display`) pour une interface plus épurée et sans redondance, avec accès direct conservé au Centre des Dépenses.
   - Correction du filtrage multi-projets dans le Centre des Dépenses avec réinjection de `project_id`.
   - Suppression de l'enregistrement de fausses transactions en cas de repli local hors-ligne.
-- **Isolation CSS & Hiérarchie Z-Index du Canvas 2D (`static/index.html`)** :
-  - Éradication de la fuite de contexte d'empilement via `isolation: isolate;` sur `.node` : les points de connexion verts (`.port`) de l'arrière-plan ne transpercent plus jamais les cartes de premier plan.
-  - Élévation dynamique au premier plan (`state.canvasMaxZIndex`) lors du clic ou du déplacement d'une carte.
-  - Hiérarchie z-index déterministe pour les nœuds sélectionnés (`z-index: 25`) et en cours de drag (`z-index: 50`).
+- **Architecture à 4 Calques Stricts & Résolution Totale des Superpositions sur le Canvas 2D (`static/index.html`)** :
+  - **Calque 1 (Fond, `z-index: 1`)** : Câbles et flux SVG (`#wires`) sur le plancher du canvas.
+  - **Calque 2 (Liaisons, `z-index: 5`)** : Badges de liaisons (`#wire-badges`) et symboles de hiérarchie (`⇣`, `→`, molette, croix) placés strictement SOUS les cartes.
+  - **Calque 3 (Cartes Agents, `z-index: 10 à 30`)** : Cartes (`#nodes`, `.node`) avec fond opaque `var(--panel)` et `isolation: isolate;`, recouvrant intégralement les câbles et badges d'arrière-plan sans aucun transpercement de points ou d'icônes.
+  - **Calque 4 (Interaction & Tirage, `z-index: 70`)** : Câble interactif en cours de création (`#wires-draft-svg`) survolant les cartes lors du glisser-déposer.
+  - Réordonnancement DOM temps réel (`appendChild`) et élévation dynamique (`state.canvasMaxZIndex`) de la carte manipulée au premier plan absolu.
 - **Standard Universel de Conception d'Agents IA (`rules/standard_conception_agent_profile.md`)** :
   - Intégration de la synthèse exhaustive des **13 modules de la Base de Connaissances RAG** en un contrat d'exécution impératif et généraliste.
   - Typologie universelle des intentions cognitives (Déterministe stricte, Analyse critique, Cadrage stratégique, Conversation support, Créativité).
