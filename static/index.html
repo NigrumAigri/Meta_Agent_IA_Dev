@@ -265,6 +265,18 @@
       visibility: hidden;
     }
 
+    .side-r.view-hidden {
+      display: none !important;
+      width: 0 !important;
+      flex: 0 0 0 !important;
+      flex-basis: 0 !important;
+      min-width: 0 !important;
+      border-left: none !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+      visibility: hidden !important;
+    }
+
     /* Responsive Drawer Overlays for Split Screen & Narrow Viewports */
     @media (max-width: 1280px) {
       .side-r {
@@ -6295,14 +6307,24 @@
         v.classList.toggle('on', v.id === `view-${view}`);
       });
 
+      // Solution Recommandée : Plein écran panoramique sur le Centre des Dépenses (masquage automatique de la barre droite)
+      const sideR = $('.side-r');
+      const btnToggleSideR = $('#btn-toggle-side-r');
+      if (view === 'finops-global') {
+        if (sideR) sideR.classList.add('view-hidden');
+        if (btnToggleSideR) btnToggleSideR.style.display = 'none';
+        loadGlobalFinOpsSummary();
+      } else {
+        if (sideR) sideR.classList.remove('view-hidden');
+        if (btnToggleSideR) btnToggleSideR.style.display = '';
+        updateRightSidebarContext();
+      }
+
       if (view === 'canvas') {
         setTimeout(() => {
           centerCanvas();
           drawWires();
         }, 60);
-      }
-      if (view === 'finops-global') {
-        loadGlobalFinOpsSummary();
       }
       saveNavState();
     }
@@ -9581,9 +9603,15 @@
         icL.setAttribute('href', isLCollapsed ? '#i-panel-expand-left' : '#i-panel-collapse-left');
       }
 
+      const isRHidden = sideR.classList.contains('view-hidden');
       if (btnR) {
-        btnR.classList.toggle('on', !isRCollapsed);
-        btnR.title = isRCollapsed ? 'Ouvrir la télémétrie & radar de score' : 'Rabattre la télémétrie & radar de score';
+        if (isRHidden) {
+          btnR.style.display = 'none';
+        } else {
+          btnR.style.display = '';
+          btnR.classList.toggle('on', !isRCollapsed);
+          btnR.title = isRCollapsed ? 'Ouvrir la télémétrie & radar de score' : 'Rabattre la télémétrie & radar de score';
+        }
       }
       if (icR) {
         icR.setAttribute('href', isRCollapsed ? '#i-panel-expand-right' : '#i-panel-collapse-right');
@@ -12513,7 +12541,7 @@
       // ------------------------------------------------------------
       window.toggleRightSidebar = (mode = null) => {
         const sideR = $('.side-r');
-        if (!sideR) return;
+        if (!sideR || state.activeView === 'finops-global') return;
 
         if (window.innerWidth <= 1280) {
           // Mode tiroir superposé (Split Screen & Mobile)

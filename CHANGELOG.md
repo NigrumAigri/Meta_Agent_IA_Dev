@@ -15,6 +15,11 @@ Toutes les modifications notables apportées à ce projet sont documentées dans
   - Épuration de la topbar : retrait du compteur flottant de dépenses (`#topbar-cost-display`) pour une interface plus épurée et sans redondance, avec accès direct conservé au Centre des Dépenses.
   - Correction du filtrage multi-projets dans le Centre des Dépenses avec réinjection de `project_id`.
   - Suppression de l'enregistrement de fausses transactions en cas de repli local hors-ligne.
+- **Affichage Panoramique Plein Écran & Masquage Automatique de la Barre Droite sur le Budget (`static/index.html`)** :
+  - Masquage contextuel automatique de la barre latérale droite (`.side-r.view-hidden`) lors de la navigation vers le Centre des Dépenses & Suivi Budgétaire (`view-finops-global`).
+  - Élimination totale de la confusion visuelle entre les métriques du dernier projet actif et le grand livre multi-projets.
+  - Attribution de 100% de la largeur de l'écran au tableau des transactions et aux cartes KPI (idéal pour le mode écran scindé en 2).
+  - Restauration instantanée et transparente de la barre latérale droite dès le retour sur le Chat Projet, le Canvas Projet ou l'Explorateur de Code.
 - **Audit & Alignement Télémétrique de la Barre Latérale Droite (`api/routes/finops.py`, `static/index.html`)** :
   - Élimination de la confusion historique entre Reasoning et Cache : `/finops/analytics` sépare désormais strictement `total_reasoning_tokens` et `total_cached_tokens`.
   - Intégration d'une ligne dédiée `Raisonnement (Thinking)` (`#tk-reasoning`) avec logo SVG cerveau vectoriel (`#F43F5E`).
