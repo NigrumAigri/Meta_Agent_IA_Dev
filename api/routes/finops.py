@@ -221,7 +221,7 @@ def get_finops_summary():
             "cost_usd": m.cost_usd,
             "latency_ms": m.latency_ms,
         }
-        for m in reversed(all_metrics[-50:])
+        for m in reversed(all_metrics[-1000:])
     ]
 
     total_budget = sum(p.budget_limit_usd for p in all_projects) if all_projects else 0.0

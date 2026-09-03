@@ -15,6 +15,13 @@ Toutes les modifications notables apportées à ce projet sont documentées dans
   - Épuration de la topbar : retrait du compteur flottant de dépenses (`#topbar-cost-display`) pour une interface plus épurée et sans redondance, avec accès direct conservé au Centre des Dépenses.
   - Correction du filtrage multi-projets dans le Centre des Dépenses avec réinjection de `project_id`.
   - Suppression de l'enregistrement de fausses transactions en cas de repli local hors-ligne.
+- **Centre des Dépenses & Budget : Sélecteur de Dates Calendrier, Bouton Actualiser & Épuration UI (`static/index.html`, `api/routes/finops.py`)** :
+  - **Retrait du badge SQLite** : Suppression définitive de l'étiquette technique « SQLite WAL En Ligne » dans l'en-tête du Centre des Dépenses pour une interface plus claire et axée métier.
+  - **Bouton Actualiser Interactif** : Remplacement par une icône SVG vectorielle circulaire avec micro-animation de rotation fluide (`.spinning`), rechargement asynchrone sécurisé du grand livre et de la télémétrie latérale, désactivation temporaire anti-rebond et notification toast de confirmation.
+  - **Sélecteur de Dates Calendrier (Entrée / Sortie)** : Intégration de deux champs calendrier natifs sombres (`#gf-filter-date-start` et `#gf-filter-date-end`) permettant de filtrer les transactions précises entre une date de début et une date de fin.
+  - **Synchronisation Bidirectionnelle** : Le menu déroulant des périodes prédéfinies (« Tout l'historique », « Aujourd'hui », « 24h », « 7 jours », « 30 jours », « Personnalisé ») remplit automatiquement le calendrier et vice-versa.
+  - **Mise en page Split-Screen Adaptative** : Réagencement flex-wrap fluide garantissant zéro débordement ni coupure de texte lors d'une utilisation en écran scindé en deux (~960px).
+  - **Scalabilité Grand Livre** : Extension de la capacité de consultation des transactions à 1000 entrées pour l'audit temporel étendu.
 - **Navigation Unifiée & Déblocage du Retour Chat depuis le Budget / Studio (`static/index.html`)** :
   - Implémentation d'une fonction d'aiguillage centralisée `openProject(projectId, threadId, targetView)` garantissant le basculement atomique de l'univers (`setWorld('proj')`) et de la vue (`setView('chat')`).
   - Résolution définitive du blocage sur l'écran Budget : cliquer sur un dossier de projet, sur une discussion quelconque (ou sur la discussion par défaut) ou créer un nouveau thread redirige immédiatement l'utilisateur sur le Chat Projet avec chargement de l'historique.
