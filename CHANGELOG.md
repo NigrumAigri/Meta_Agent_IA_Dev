@@ -20,6 +20,7 @@ Toutes les modifications notables apportées à ce projet sont documentées dans
   - **Bouton Actualiser Interactif** : Remplacement par une icône SVG vectorielle circulaire avec micro-animation de rotation fluide (`.spinning`), rechargement asynchrone sécurisé du grand livre et de la télémétrie latérale, désactivation temporaire anti-rebond et notification toast de confirmation.
   - **Sélecteur de Dates Calendrier (Entrée / Sortie)** : Intégration de deux champs calendrier natifs sombres (`#gf-filter-date-start` et `#gf-filter-date-end`) permettant de filtrer les transactions précises entre une date de début et une date de fin.
   - **Synchronisation Bidirectionnelle** : Le menu déroulant des périodes prédéfinies (« Tout l'historique », « Aujourd'hui », « 24h », « 7 jours », « 30 jours », « Personnalisé ») remplit automatiquement le calendrier et vice-versa.
+  - **Ouverture Directe du Calendrier au Clic** : Déclenchement immédiat de `showPicker()` dès le clic sur le texte de la date (`jj/mm/aaaa`), l'icône calendrier ou les étiquettes (`Du` / `au`), éliminant l'obligation de viser la minuscule icône native.
   - **Mise en page Split-Screen Adaptative** : Réagencement flex-wrap fluide garantissant zéro débordement ni coupure de texte lors d'une utilisation en écran scindé en deux (~960px).
   - **Scalabilité Grand Livre** : Extension de la capacité de consultation des transactions à 1000 entrées pour l'audit temporel étendu.
 - **Navigation Unifiée & Déblocage du Retour Chat depuis le Budget / Studio (`static/index.html`)** :

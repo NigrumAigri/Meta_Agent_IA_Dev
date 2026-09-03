@@ -2969,6 +2969,9 @@
     .spinning {
       animation: spin-anim 0.65s linear infinite;
     }
+    input[type="date"] {
+      cursor: pointer;
+    }
     input[type="date"]::-webkit-calendar-picker-indicator {
       filter: invert(0.8);
       cursor: pointer;
@@ -2977,6 +2980,10 @@
     }
     input[type="date"]::-webkit-calendar-picker-indicator:hover {
       opacity: 1;
+    }
+    #gf-date-start-wrap:hover input,
+    #gf-date-end-wrap:hover input {
+      color: #38BDF8 !important;
     }
     .att-chip {
       display: inline-flex;
@@ -3711,11 +3718,16 @@
               <!-- Sélecteur Calendrier Entrée / Sortie -->
               <div style="flex:1 1 230px;min-width:215px">
                 <div style="display:flex;align-items:center;gap:6px;background:#101014;border:1px solid #27272A;border-radius:6px;padding:0 8px;height:32px;width:100%;box-sizing:border-box">
-                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#A1A1AA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                  <span style="font-size:10.5px;color:#71717A;white-space:nowrap;flex-shrink:0">Du</span>
-                  <input type="date" id="gf-filter-date-start" title="Date d'entrée (début)" style="background:transparent;border:none;color:#FAFAFA;font-size:11px;padding:0;outline:none;font-family:inherit;width:100%;min-width:80px;color-scheme:dark" />
-                  <span style="font-size:10.5px;color:#71717A;white-space:nowrap;flex-shrink:0">au</span>
-                  <input type="date" id="gf-filter-date-end" title="Date de sortie (fin)" style="background:transparent;border:none;color:#FAFAFA;font-size:11px;padding:0;outline:none;font-family:inherit;width:100%;min-width:80px;color-scheme:dark" />
+                  <svg id="gf-date-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#A1A1AA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;cursor:pointer" title="Cliquer pour ouvrir le calendrier"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <div id="gf-date-start-wrap" style="display:flex;align-items:center;cursor:pointer;flex:1;min-width:0" title="Cliquer pour choisir la date de début">
+                    <span style="font-size:10.5px;color:#71717A;white-space:nowrap;margin-right:4px;flex-shrink:0">Du</span>
+                    <input type="date" id="gf-filter-date-start" title="Date d'entrée (début)" style="background:transparent;border:none;color:#FAFAFA;font-size:11px;padding:0;outline:none;font-family:inherit;width:100%;min-width:80px;color-scheme:dark;cursor:pointer" />
+                  </div>
+                  <span style="font-size:10.5px;color:#52525B;margin:0 2px;flex-shrink:0">|</span>
+                  <div id="gf-date-end-wrap" style="display:flex;align-items:center;cursor:pointer;flex:1;min-width:0" title="Cliquer pour choisir la date de fin">
+                    <span style="font-size:10.5px;color:#71717A;white-space:nowrap;margin-right:4px;flex-shrink:0">au</span>
+                    <input type="date" id="gf-filter-date-end" title="Date de sortie (fin)" style="background:transparent;border:none;color:#FAFAFA;font-size:11px;padding:0;outline:none;font-family:inherit;width:100%;min-width:80px;color-scheme:dark;cursor:pointer" />
+                  </div>
                 </div>
               </div>
               <div style="flex:1 1 150px;min-width:130px">
@@ -11421,13 +11433,37 @@
         };
       }
 
+      const openStartPicker = (e) => {
+        if (e) e.stopPropagation();
+        if (startInp && typeof startInp.showPicker === 'function') {
+          try { startInp.showPicker(); } catch (err) {}
+        }
+      };
+      const openEndPicker = (e) => {
+        if (e) e.stopPropagation();
+        if (endInp && typeof endInp.showPicker === 'function') {
+          try { endInp.showPicker(); } catch (err) {}
+        }
+      };
+
+      const dateIcon = $('#gf-date-icon');
+      if (dateIcon) dateIcon.onclick = openStartPicker;
+
+      const dateStartWrap = $('#gf-date-start-wrap');
+      if (dateStartWrap) dateStartWrap.onclick = openStartPicker;
+
+      const dateEndWrap = $('#gf-date-end-wrap');
+      if (dateEndWrap) dateEndWrap.onclick = openEndPicker;
+
       if (startInp) {
+        startInp.onclick = openStartPicker;
         startInp.onchange = () => {
           if (periodSelect) periodSelect.value = 'custom';
           renderFilteredGlobalFinOps();
         };
       }
       if (endInp) {
+        endInp.onclick = openEndPicker;
         endInp.onchange = () => {
           if (periodSelect) periodSelect.value = 'custom';
           renderFilteredGlobalFinOps();
