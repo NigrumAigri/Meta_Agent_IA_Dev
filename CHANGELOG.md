@@ -15,6 +15,11 @@ Toutes les modifications notables apportées à ce projet sont documentées dans
   - Épuration de la topbar : retrait du compteur flottant de dépenses (`#topbar-cost-display`) pour une interface plus épurée et sans redondance, avec accès direct conservé au Centre des Dépenses.
   - Correction du filtrage multi-projets dans le Centre des Dépenses avec réinjection de `project_id`.
   - Suppression de l'enregistrement de fausses transactions en cas de repli local hors-ligne.
+- **Navigation Unifiée & Déblocage du Retour Chat depuis le Budget / Studio (`static/index.html`)** :
+  - Implémentation d'une fonction d'aiguillage centralisée `openProject(projectId, threadId, targetView)` garantissant le basculement atomique de l'univers (`setWorld('proj')`) et de la vue (`setView('chat')`).
+  - Résolution définitive du blocage sur l'écran Budget : cliquer sur un dossier de projet, sur une discussion quelconque (ou sur la discussion par défaut) ou créer un nouveau thread redirige immédiatement l'utilisateur sur le Chat Projet avec chargement de l'historique.
+  - Alignement complet des déclencheurs transverses : la recherche globale (`Ctrl+K`), la modale de création de projet et la fonction programmatique `selectProjectById` utilisent désormais tous `openProject`.
+  - Ajout d'un indicateur actif lumineux `.on` sur le bouton de navigation `Dépenses & Budget` dans la barre supérieure.
 - **Affichage Panoramique Plein Écran & Masquage Automatique de la Barre Droite sur le Budget (`static/index.html`)** :
   - Masquage contextuel automatique de la barre latérale droite (`.side-r.view-hidden`) lors de la navigation vers le Centre des Dépenses & Suivi Budgétaire (`view-finops-global`).
   - Élimination totale de la confusion visuelle entre les métriques du dernier projet actif et le grand livre multi-projets.

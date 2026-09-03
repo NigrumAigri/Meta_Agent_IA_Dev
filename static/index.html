@@ -5461,6 +5461,27 @@
       renderProjects();
     }
 
+    async function openProject(projectId, threadId = null, targetView = 'chat') {
+      const p = state.projects.find(x => x.id === projectId);
+      if (!p) return;
+      state.activeProject = p;
+      const pThreads = state.projectThreads[p.id] || [];
+      state.activeThreadId = threadId || pThreads[0]?.id || null;
+
+      // 1. Basculer vers l'univers projet avec la vue cible (par défaut 'chat')
+      await setWorld('proj', targetView);
+
+      // 2. Charger la discussion du projet
+      loadProjectChat(p.id, state.activeThreadId);
+
+      // 3. Rafraîchir l'interface
+      renderProjects();
+      updateProjectHeader();
+      saveNavState();
+      toast(`Projet sélectionné : ${p.name}`);
+      log(`Projet actif : ${p.name}`);
+    }
+
     function renderProjects() {
       const listEl = $('#proj-list');
       if (!listEl) return;
@@ -5535,21 +5556,9 @@
       $$('#proj-list [data-proj-header]').forEach(el => {
         el.onclick = () => {
           const pid = el.dataset.projHeader;
-          const p = state.projects.find(x => x.id === pid);
-          if (p) {
-            state.activeProject = p;
-            state.activeWorld = 'proj';
-            const pThreads = state.projectThreads[p.id] || [];
-            state.activeThreadId = pThreads[0]?.id || null;
-            renderProjects();
-            updateProjectHeader();
-            loadAgents();
-            loadProjectChat(p.id, state.activeThreadId);
-            updateRightSidebarContext();
-            saveNavState();
-            toast(`Projet sélectionné : ${p.name}`);
-            log(`Projet actif : ${p.name}`);
-          }
+          // Si on était sur le Budget ou en mode Studio, on bascule vers le Chat du projet
+          const target = (state.activeView === 'finops-global' || state.activeWorld === 'studio') ? 'chat' : state.activeView;
+          openProject(pid, null, target);
         };
 
         // Clic droit sur le dossier de projet pour ouvrir le menu projet
@@ -5577,28 +5586,19 @@
       });
 
       // Gestionnaires de clic sur chaque discussion (Thread)
-      $$('#proj-list .thread-item[data-thread-id]').forEach(el => {
+      $$('#proj-list .thread-item').forEach(el => {
         el.onclick = () => {
           const pid = el.dataset.projId;
-          const tid = el.dataset.threadId;
-          const p = state.projects.find(x => x.id === pid);
-          if (p) {
-            state.activeProject = p;
-            state.activeWorld = 'proj';
-            state.activeThreadId = tid;
-            renderProjects();
-            updateProjectHeader();
-            loadAgents();
-            loadProjectChat(p.id, tid);
-            updateRightSidebarContext();
-            saveNavState();
-          }
+          const tid = el.dataset.threadId || null;
+          openProject(pid, tid, 'chat');
         };
 
         // Clic droit pour menu contextuel
         el.oncontextmenu = (e) => {
-          e.preventDefault();
-          openThreadContextMenu(e, el.dataset.projId, el.dataset.threadId);
+          if (el.dataset.threadId) {
+            e.preventDefault();
+            openThreadContextMenu(e, el.dataset.projId, el.dataset.threadId);
+          }
         };
       });
 
@@ -5637,14 +5637,8 @@
       });
 
       if (created) {
-        state.activeProject = p;
-        state.activeWorld = 'proj';
-        state.activeThreadId = created.id;
         await fetchProjectThreads(projectId);
-        renderProjects();
-        updateProjectHeader();
-        loadProjectChat(projectId, created.id);
-        setView('chat');
+        await openProject(projectId, created.id, 'chat');
         toast('Nouvelle discussion vierge initialisée', true);
         log(`Nouveau thread vierge créé pour ${p.name}`);
       } else {
@@ -6273,7 +6267,7 @@
         if (targetView) {
           setView(targetView);
         } else if (state.activeView === 'finops-global') {
-          setView('canvas');
+          setView('chat');
         }
         const lblChat = $('#tab-label-chat'); if (lblChat) lblChat.textContent = 'Chat Projet';
         const lblCanvas = $('#tab-label-canvas'); if (lblCanvas) lblCanvas.textContent = 'Canvas Projet';
@@ -6306,6 +6300,9 @@
       $$('.main > .view').forEach(v => {
         v.classList.toggle('on', v.id === `view-${view}`);
       });
+
+      const btnFinops = $('#btn-open-finops-global');
+      if (btnFinops) btnFinops.classList.toggle('on', view === 'finops-global');
 
       // Solution Recommandée : Plein écran panoramique sur le Centre des Dépenses (masquage automatique de la barre droite)
       const sideR = $('.side-r');
@@ -9557,15 +9554,9 @@
 
       if (created) {
         state.projects.unshift(created);
-        state.activeProject = created;
-        state.activeWorld = 'proj';
         await fetchProjectThreads(created.id);
-        const pThreads = state.projectThreads[created.id] || [];
-        state.activeThreadId = pThreads[0]?.id || null;
-        renderProjects();
+        await openProject(created.id, null, 'chat');
         closeOverlay('#ovl-new');
-        setWorld('proj');
-        setView('chat');
         $('#np-name').value = '';
         $('#np-path').value = '';
         toast(`Workspace « ${name} » ouvert avec succès`, true);
@@ -11577,14 +11568,7 @@
     }
 
     function selectProjectById(id) {
-      const p = state.projects.find(x => x.id === id);
-      if (p) {
-        state.activeProject = p;
-        setWorld('proj');
-        loadProjectChat(p.id);
-        renderProjects();
-        setView('chat');
-      }
+      openProject(id, null, 'chat');
     }
 
     /* --- File d'Attente des Décisions & Validations (Gouvernance Globale) --- */
@@ -11793,17 +11777,7 @@
                 d: p.target_path || `output_projects/${p.id}`,
                 i: 'i-folder',
                 r: () => {
-                  state.activeProject = p;
-                  state.activeWorld = 'proj';
-                  const pThreads = (state.projectThreads && state.projectThreads[p.id]) || [];
-                  state.activeThreadId = pThreads[0]?.id || null;
-                  renderProjects();
-                  updateProjectHeader();
-                  loadAgents();
-                  loadProjectChat(p.id, state.activeThreadId);
-                  updateRightSidebarContext();
-                  saveNavState();
-                  toast(`Projet sélectionné : ${p.name}`);
+                  openProject(p.id, null, 'chat');
                 }
               });
             }
@@ -11818,17 +11792,7 @@
                   d: `Discussion dans « ${p.name} »`,
                   i: 'i-chat',
                   r: () => {
-                    state.activeProject = p;
-                    state.activeWorld = 'proj';
-                    state.activeThreadId = t.id;
-                    renderProjects();
-                    updateProjectHeader();
-                    loadAgents();
-                    loadProjectChat(p.id, t.id);
-                    updateRightSidebarContext();
-                    saveNavState();
-                    setView('chat');
-                    toast(`Discussion : ${t.title}`);
+                    openProject(p.id, t.id, 'chat');
                   }
                 });
               }
