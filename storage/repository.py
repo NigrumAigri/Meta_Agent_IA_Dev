@@ -1023,8 +1023,8 @@ class FinOpsRepository:
             INSERT INTO finops_ledger (
                 id, timestamp, session_id, project_id, project_name, agent_id,
                 agent_name, model, task_name, prompt_tokens, completion_tokens,
-                reasoning_tokens, total_tokens, cost_usd, latency_ms, ttft_ms, status
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                reasoning_tokens, cached_tokens, total_tokens, cost_usd, latency_ms, ttft_ms, status
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
             """,
             (
                 metric.id,
@@ -1039,6 +1039,7 @@ class FinOpsRepository:
                 metric.prompt_tokens,
                 metric.completion_tokens,
                 metric.reasoning_tokens,
+                getattr(metric, "cached_tokens", 0) or 0,
                 metric.total_tokens,
                 metric.cost_usd,
                 metric.latency_ms,
@@ -1065,6 +1066,7 @@ class FinOpsRepository:
                     prompt_tokens=r["prompt_tokens"],
                     completion_tokens=r["completion_tokens"],
                     reasoning_tokens=r["reasoning_tokens"],
+                    cached_tokens=r["cached_tokens"] if "cached_tokens" in r.keys() else 0,
                     total_tokens=r["total_tokens"],
                     cost_usd=r["cost_usd"],
                     latency_ms=r["latency_ms"],

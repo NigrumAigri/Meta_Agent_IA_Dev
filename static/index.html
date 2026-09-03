@@ -496,7 +496,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
+      gap: 6px;
+      flex-wrap: wrap;
       font-size: 11px;
       margin-top: 12px;
       border-top: 1px solid #1E1E24;
@@ -3706,10 +3707,11 @@
                 </div>
                 <div class="mono" style="font-size:20px;font-weight:700;color:#FAFAFA;white-space:nowrap" id="gf-total-tokens">0</div>
               </div>
-              <div class="kpi-footer" style="gap:4px">
-                <span class="chip mono" style="font-size:9.5px;padding:1px 5px;white-space:nowrap" id="gf-tk-in" title="Jetons en entrée (Prompt)">In: 0</span>
-                <span class="chip mono" style="font-size:9.5px;padding:1px 5px;white-space:nowrap" id="gf-tk-out" title="Jetons générés en sortie">Out: 0</span>
-                <span class="chip mono" style="font-size:9.5px;padding:1px 5px;white-space:nowrap" id="gf-tk-cache" title="Jetons réutilisés via le cache">Cache: 0</span>
+              <div class="kpi-footer" style="gap:4px;flex-wrap:wrap">
+                <span class="chip mono" style="font-size:9px;padding:1px 5px;white-space:nowrap;display:inline-flex;align-items:center;gap:3px" id="gf-tk-in" title="Jetons en entrée (Prompt)"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg><span id="gf-tk-in-val">In: 0</span></span>
+                <span class="chip mono" style="font-size:9px;padding:1px 5px;white-space:nowrap;display:inline-flex;align-items:center;gap:3px" id="gf-tk-out" title="Jetons générés en sortie"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#A78BFA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg><span id="gf-tk-out-val">Out: 0</span></span>
+                <span class="chip mono" style="font-size:9px;padding:1px 5px;white-space:nowrap;display:inline-flex;align-items:center;gap:3px" id="gf-tk-reasoning" title="Jetons de pensée / réflexion"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#F43F5E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z"/></svg><span id="gf-tk-reasoning-val">R: 0</span></span>
+                <span class="chip mono" style="font-size:9px;padding:1px 5px;white-space:nowrap;display:inline-flex;align-items:center;gap:3px" id="gf-tk-cache" title="Taux de cache OpenRouter (Prompt Caching)"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#10B981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span id="gf-tk-cache-val">Cache: 0%</span></span>
               </div>
             </div>
 
@@ -3753,8 +3755,8 @@
               </span>
               <span class="mut2 mono" style="font-size:11px" id="gf-table-caption">Historique complet des transactions</span>
             </div>
-            <div class="scroll" style="overflow-x:auto">
-              <table style="width:100%;border-collapse:collapse;font-size:11.5px;text-align:left">
+            <div class="scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+              <table style="width:100%;border-collapse:collapse;font-size:11.5px;text-align:left;min-width:820px">
                 <thead>
                   <tr style="border-bottom:1px solid #27272A;color:#71717A">
                     <th style="padding:8px 10px">Date & Heure</th>
@@ -11369,7 +11371,8 @@
       let filteredTokens = data.total_tokens || 0;
       let filteredIn = data.total_input_tokens || 0;
       let filteredOut = data.total_output_tokens || 0;
-      let filteredReasoning = data.total_cached_tokens || 0;
+      let filteredReasoning = data.total_reasoning_tokens || 0;
+      let filteredCached = data.total_cached_tokens || 0;
       let filteredCalls = data.total_calls || 0;
 
       if (isFiltered) {
@@ -11377,11 +11380,13 @@
         filteredIn = txs.reduce((acc, t) => acc + (t.prompt_tokens || 0), 0);
         filteredOut = txs.reduce((acc, t) => acc + (t.completion_tokens || 0), 0);
         filteredReasoning = txs.reduce((acc, t) => acc + (t.reasoning_tokens || 0), 0);
+        filteredCached = txs.reduce((acc, t) => acc + (t.cached_tokens || 0), 0);
         filteredTokens = filteredIn + filteredOut;
         filteredCalls = txs.length;
       }
 
       const filteredPureOut = Math.max(0, filteredOut - filteredReasoning);
+      const cacheRate = filteredIn > 0 ? ((filteredCached / filteredIn) * 100).toFixed(1) : '0.0';
 
       // Affichage des KPIs
       const costEl = $('#gf-total-cost'); if (costEl) costEl.textContent = money(filteredCost);
@@ -11401,9 +11406,10 @@
         if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
         return num.toString();
       };
-      const tkInEl = $('#gf-tk-in'); if (tkInEl) tkInEl.textContent = `In: ${fmtTk(filteredIn)}`;
-      const tkOutEl = $('#gf-tk-out'); if (tkOutEl) tkOutEl.textContent = `Out: ${fmtTk(filteredPureOut)}`;
-      const tkCacheEl = $('#gf-tk-cache'); if (tkCacheEl) tkCacheEl.textContent = filteredReasoning > 0 ? `🧠: ${fmtTk(filteredReasoning)}` : `Cache: 0`;
+      const tkInValEl = $('#gf-tk-in-val'); if (tkInValEl) tkInValEl.textContent = `In: ${fmtTk(filteredIn)}`;
+      const tkOutValEl = $('#gf-tk-out-val'); if (tkOutValEl) tkOutValEl.textContent = `Out: ${fmtTk(filteredPureOut)}`;
+      const tkReasoningValEl = $('#gf-tk-reasoning-val'); if (tkReasoningValEl) tkReasoningValEl.textContent = `R: ${fmtTk(filteredReasoning)}`;
+      const tkCacheValEl = $('#gf-tk-cache-val'); if (tkCacheValEl) tkCacheValEl.textContent = `Cache: ${cacheRate}%`;
       const callsEl = $('#gf-total-calls'); if (callsEl) callsEl.textContent = int(filteredCalls);
 
       // Calcul Budget & Disjoncteur (Multi-Projets vs Projet Dédié)
@@ -11450,7 +11456,15 @@
             const pTok = tx.prompt_tokens || 0;
             const rTok = tx.reasoning_tokens || 0;
             const cTok = Math.max(0, (tx.completion_tokens || 0) - rTok);
+            const caTok = tx.cached_tokens || 0;
+            const rowCacheRate = pTok > 0 ? ((caTok / pTok) * 100).toFixed(1) : '0.0';
             const totTok = (tx.total_tokens || 0) || (pTok + (tx.completion_tokens || 0));
+
+            // Icons vectoriels SVG (STRICTEMENT AUCUN EMOJI)
+            const inSvg = `<svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>`;
+            const outSvg = `<svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#A78BFA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>`;
+            const brainSvg = `<svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#F43F5E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z"/></svg>`;
+            const cacheSvg = `<svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#10B981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`;
 
             // Typologie : Zéro emoji
             const isCore = isMetaAgent(tx);
@@ -11472,11 +11486,13 @@
               <td style="padding:8px 10px" class="mono mut2">${esc(tx.model)}</td>
               <td style="padding:8px 10px;text-align:right" class="mono">
                 <div style="font-weight:600">${int(totTok)}</div>
-                <div style="font-size:10px;color:#71717A;margin-top:2px;display:flex;justify-content:flex-end;gap:4px;white-space:nowrap;align-items:center">
-                  <span style="color:#60A5FA" title="Jetons d'Entrée (Prompt In)">↓ ${int(pTok)}</span>
+                <div style="font-size:10px;color:#71717A;margin-top:2px;display:flex;justify-content:flex-end;gap:5px;white-space:nowrap;align-items:center">
+                  <span style="color:#60A5FA;display:inline-flex;align-items:center;gap:2px" title="Jetons d'Entrée (Prompt In)">${inSvg} ${int(pTok)}</span>
                   <span>·</span>
-                  <span style="color:#A78BFA" title="Jetons de Sortie (Génération Visible Out)">↑ ${int(cTok)}</span>
-                  ${rTok > 0 ? `<span>·</span><span style="color:#F43F5E;font-weight:600;display:inline-flex;align-items:center;gap:2px" title="Jetons de Pensée & Raisonnement (Reasoning)">🧠 ${int(rTok)}</span>` : ''}
+                  <span style="color:#A78BFA;display:inline-flex;align-items:center;gap:2px" title="Jetons de Sortie (Génération Visible Out)">${outSvg} ${int(cTok)}</span>
+                  ${rTok > 0 ? `<span>·</span><span style="color:#F43F5E;font-weight:600;display:inline-flex;align-items:center;gap:2px" title="Jetons de Pensée & Raisonnement (Reasoning)">${brainSvg} ${int(rTok)}</span>` : ''}
+                  <span>·</span>
+                  <span style="color:#10B981;display:inline-flex;align-items:center;gap:2px" title="Taux de cache OpenRouter (Prompt Caching)">${cacheSvg} ${rowCacheRate}%</span>
                 </div>
               </td>
               <td style="padding:8px 10px;text-align:right;color:#22C55E;font-weight:600" class="mono">${money(tx.cost_usd || 0)}</td>

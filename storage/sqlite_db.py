@@ -178,6 +178,7 @@ class SqliteDatabase:
             prompt_tokens INTEGER NOT NULL DEFAULT 0,
             completion_tokens INTEGER NOT NULL DEFAULT 0,
             reasoning_tokens INTEGER NOT NULL DEFAULT 0,
+            cached_tokens INTEGER NOT NULL DEFAULT 0,
             total_tokens INTEGER NOT NULL DEFAULT 0,
             cost_usd REAL NOT NULL DEFAULT 0.0,
             latency_ms INTEGER NOT NULL DEFAULT 0,
@@ -549,6 +550,14 @@ class SqliteDatabase:
                         conn.execute(ddl)
                     except Exception:
                         pass
+
+            # Migration de la colonne cached_tokens pour finops_ledger
+            existing_cols_finops = {r[1] for r in conn.execute("PRAGMA table_info(finops_ledger);").fetchall()}
+            if "cached_tokens" not in existing_cols_finops:
+                try:
+                    conn.execute("ALTER TABLE finops_ledger ADD COLUMN cached_tokens INTEGER NOT NULL DEFAULT 0;")
+                except Exception:
+                    pass
 
             # Migration hooks_audit_log
             try:

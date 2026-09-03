@@ -15,6 +15,14 @@ Toutes les modifications notables apportées à ce projet sont documentées dans
   - Épuration de la topbar : retrait du compteur flottant de dépenses (`#topbar-cost-display`) pour une interface plus épurée et sans redondance, avec accès direct conservé au Centre des Dépenses.
   - Correction du filtrage multi-projets dans le Centre des Dépenses avec réinjection de `project_id`.
   - Suppression de l'enregistrement de fausses transactions en cas de repli local hors-ligne.
+- **Télémétrie Cache Rate OpenRouter & Logos SVG 100% Sans Emoji (`services/openrouter_client.py`, `core/domain.py`, `storage/`, `api/routes/finops.py`, `static/index.html`)** :
+  - Extraction native de `usage.prompt_tokens_details.cached_tokens` depuis les réponses OpenRouter et persistance dans `finops_ledger`.
+  - Calcul et affichage dynamique du **Cache Rate à 3 niveaux** :
+    - **Par Ligne** : Pourcentage exact de tokens en cache par inférence dans le Journal d'Audit (`Cache: XX.X%`).
+    - **Par Projet** : Taux de cache consolidé propre au projet sélectionné (`p_cache_rate`).
+    - **Global** : Taux d'optimisation global de toute l'infrastructure (`global_cache_rate`).
+  - Éradication totale des emojis dans toute la vue FinOps/Budget, remplacés intégralement par des icônes vectorielles SVG (flèches In/Out, cerveau vectoriel pour Reasoning, éclair pour Cache).
+  - Optimisation responsive spéciale **écran scindé en deux (Split Screen ~960px)** : `flex-wrap: wrap` sur les métriques de cartes KPI, `min-width: 820px` et défilement horizontal fluide sur le grand livre évitant tout chevauchement ou rupture visuelle.
 - **Typologie FinOps & Séparation Stricte Meta-Concepteurs vs Agents Projet (`api/routes/finops.py`, `static/index.html`)** :
   - Ajout d'une colonne dédiée `Typologie` dans le Journal d'Audit des Inférences IA pour distinguer instantanément les inférences des 6 Méta-Agents (`Meta-Concepteur`) de celles des sous-agents du projet (`Agent Projet`), dans un design sobre et 100% sans emoji.
   - Simplification de l'intitulé de colonne `Projet / Studio` ramené proprement à `Projet`.

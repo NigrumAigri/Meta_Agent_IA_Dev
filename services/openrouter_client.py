@@ -302,6 +302,11 @@ class OpenRouterClient:
                     usage.get("completion_tokens_details", {}).get("reasoning_tokens")
                     or usage.get("reasoning_tokens", 0)
                 )
+                cached_tokens = (
+                    usage.get("prompt_tokens_details", {}).get("cached_tokens")
+                    or usage.get("cached_tokens", 0)
+                    or 0
+                )
                 t_tokens = usage.get("total_tokens", p_tokens + c_tokens)
 
                 # 1. Facturation 100% exacte en direct depuis OpenRouter
@@ -333,6 +338,7 @@ class OpenRouterClient:
                     prompt_tokens=p_tokens,
                     completion_tokens=c_tokens,
                     reasoning_tokens=r_tokens,
+                    cached_tokens=cached_tokens,
                     total_tokens=t_tokens,
                     cost_usd=cost_usd,
                     latency_ms=lat_ms,

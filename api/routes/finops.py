@@ -98,7 +98,9 @@ def get_finops_summary():
     total_cost = sum(m.cost_usd for m in all_metrics)
     total_in = sum(m.prompt_tokens for m in all_metrics)
     total_out = sum(m.completion_tokens for m in all_metrics)
-    total_cache = sum(m.reasoning_tokens for m in all_metrics)
+    total_reasoning = sum(getattr(m, "reasoning_tokens", 0) or 0 for m in all_metrics)
+    total_cached = sum(getattr(m, "cached_tokens", 0) or 0 for m in all_metrics)
+    global_cache_rate = round((total_cached / total_in * 100), 1) if total_in > 0 else 0.0
     total_tokens = total_in + total_out
     total_calls = len(all_metrics)
 
@@ -116,6 +118,9 @@ def get_finops_summary():
         p_metrics = project_metrics_map.get(pid_str, [])
         p_cost = sum(m.cost_usd for m in p_metrics)
         p_tokens = sum(m.prompt_tokens + m.completion_tokens for m in p_metrics)
+        p_in = sum(m.prompt_tokens for m in p_metrics)
+        p_cached = sum(getattr(m, "cached_tokens", 0) or 0 for m in p_metrics)
+        p_cache_rate = round((p_cached / p_in * 100), 1) if p_in > 0 else 0.0
         p_calls = len(p_metrics)
         p_agents = agent_repo.list_all(project_id=pid_str)
         p_pct = round((p_cost / total_cost * 100), 1) if total_cost > 0 else 0.0
@@ -125,6 +130,9 @@ def get_finops_summary():
             "name": p.name,
             "cost_usd": p_cost,
             "tokens": p_tokens,
+            "prompt_tokens": p_in,
+            "cached_tokens": p_cached,
+            "cache_rate": p_cache_rate,
             "calls": p_calls,
             "agents_count": len(p_agents),
             "pct": p_pct,
@@ -135,6 +143,9 @@ def get_finops_summary():
     studio_metrics = project_metrics_map.get(None, [])
     studio_cost = sum(m.cost_usd for m in studio_metrics)
     studio_tokens = sum(m.prompt_tokens + m.completion_tokens for m in studio_metrics)
+    studio_in = sum(m.prompt_tokens for m in studio_metrics)
+    studio_cached = sum(getattr(m, "cached_tokens", 0) or 0 for m in studio_metrics)
+    studio_cache_rate = round((studio_cached / studio_in * 100), 1) if studio_in > 0 else 0.0
     studio_calls = len(studio_metrics)
     studio_pct = round((studio_cost / total_cost * 100), 1) if total_cost > 0 else 0.0
 
@@ -143,6 +154,9 @@ def get_finops_summary():
         "name": "Studio & Inception Globale (Hors Projets)",
         "cost_usd": studio_cost,
         "tokens": studio_tokens,
+        "prompt_tokens": studio_in,
+        "cached_tokens": studio_cached,
+        "cache_rate": studio_cache_rate,
         "calls": studio_calls,
         "agents_count": len(agent_repo.list_all(is_core_only=True)),
         "pct": studio_pct,
@@ -157,21 +171,26 @@ def get_finops_summary():
     for m in all_metrics:
         name = agent_id_to_name.get(m.agent_id) or m.agent_name or m.agent_id
         if name not in agent_breakdown:
-            agent_breakdown[name] = {"cost_usd": 0.0, "tokens": 0, "calls": 0}
+            agent_breakdown[name] = {"cost_usd": 0.0, "tokens": 0, "calls": 0, "prompt_tokens": 0, "cached_tokens": 0}
         agent_breakdown[name]["cost_usd"] += m.cost_usd
         agent_breakdown[name]["tokens"] += m.prompt_tokens + m.completion_tokens
+        agent_breakdown[name]["prompt_tokens"] += m.prompt_tokens
+        agent_breakdown[name]["cached_tokens"] += getattr(m, "cached_tokens", 0) or 0
         agent_breakdown[name]["calls"] += 1
 
-    agents_data = [
-        {
+    agents_data = []
+    for name, data in agent_breakdown.items():
+        cache_rate = round((data["cached_tokens"] / data["prompt_tokens"] * 100), 1) if data["prompt_tokens"] > 0 else 0.0
+        agents_data.append({
             "name": name,
             "cost_usd": data["cost_usd"],
             "tokens": data["tokens"],
             "calls": data["calls"],
+            "prompt_tokens": data["prompt_tokens"],
+            "cached_tokens": data["cached_tokens"],
+            "cache_rate": cache_rate,
             "pct": round((data["cost_usd"] / total_cost * 100), 1) if total_cost > 0 else 0.0,
-        }
-        for name, data in agent_breakdown.items()
-    ]
+        })
     agents_data.sort(key=lambda x: x["cost_usd"], reverse=True)
 
     core_agent_ids = {a.id for a in all_agents if getattr(a, "is_core_meta_agent", False)}
@@ -191,6 +210,8 @@ def get_finops_summary():
             "prompt_tokens": m.prompt_tokens,
             "completion_tokens": m.completion_tokens,
             "reasoning_tokens": m.reasoning_tokens,
+            "cached_tokens": getattr(m, "cached_tokens", 0) or 0,
+            "cache_rate": round(((getattr(m, "cached_tokens", 0) or 0) / m.prompt_tokens * 100), 1) if m.prompt_tokens > 0 else 0.0,
             "cost_usd": m.cost_usd,
             "latency_ms": m.latency_ms,
         }
@@ -203,7 +224,9 @@ def get_finops_summary():
         "total_cost_usd": total_cost,
         "total_input_tokens": total_in,
         "total_output_tokens": total_out,
-        "total_cached_tokens": total_cache,
+        "total_reasoning_tokens": total_reasoning,
+        "total_cached_tokens": total_cached,
+        "global_cache_rate": global_cache_rate,
         "total_tokens": total_tokens,
         "total_calls": total_calls,
         "budget_limit_usd": round(total_budget, 2),
