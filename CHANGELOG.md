@@ -15,6 +15,13 @@ Toutes les modifications notables apportées à ce projet sont documentées dans
   - Épuration de la topbar : retrait du compteur flottant de dépenses (`#topbar-cost-display`) pour une interface plus épurée et sans redondance, avec accès direct conservé au Centre des Dépenses.
   - Correction du filtrage multi-projets dans le Centre des Dépenses avec réinjection de `project_id`.
   - Suppression de l'enregistrement de fausses transactions en cas de repli local hors-ligne.
+- **Audit & Alignement Télémétrique de la Barre Latérale Droite (`api/routes/finops.py`, `static/index.html`)** :
+  - Élimination de la confusion historique entre Reasoning et Cache : `/finops/analytics` sépare désormais strictement `total_reasoning_tokens` et `total_cached_tokens`.
+  - Intégration d'une ligne dédiée `Raisonnement (Thinking)` (`#tk-reasoning`) avec logo SVG cerveau vectoriel (`#F43F5E`).
+  - Refonte du badge de cache en `Taux de cache (Prompt)` affichant les tokens et le pourcentage réel (`0 (0.0%)`), avec logo SVG éclair vectoriel (`#10B981`).
+  - Correction du libellé `Latence TTFT` clarifié en `Latence moyenne` pour correspondre à la latence totale réelle de réponse.
+  - Synchronisation du plafond budgétaire dans `projects_data` (`budget_limit_usd`), résolvant l'affichage `$ 0.0000` de la Carte 4 pour correspondre parfaitement au budget réel du projet.
+  - Logos vectoriels SVG intégrés sur 100% des métriques de la barre latérale sans aucun emoji.
 - **Télémétrie Cache Rate OpenRouter & Logos SVG 100% Sans Emoji (`services/openrouter_client.py`, `core/domain.py`, `storage/`, `api/routes/finops.py`, `static/index.html`)** :
   - Extraction native de `usage.prompt_tokens_details.cached_tokens` depuis les réponses OpenRouter et persistance dans `finops_ledger`.
   - Calcul et affichage dynamique du **Cache Rate à 3 niveaux** :

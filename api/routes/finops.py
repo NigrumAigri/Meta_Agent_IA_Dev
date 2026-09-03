@@ -36,7 +36,9 @@ def get_finops_analytics(project_id: str | None = Query(None, description="Filtr
     total_cost = sum(m.cost_usd for m in metrics)
     total_in = sum(m.prompt_tokens for m in metrics)
     total_out = sum(m.completion_tokens for m in metrics)
-    total_cache = sum(m.reasoning_tokens for m in metrics)
+    total_reasoning = sum(getattr(m, "reasoning_tokens", 0) or 0 for m in metrics)
+    total_cached = sum(getattr(m, "cached_tokens", 0) or 0 for m in metrics)
+    cache_rate = round((total_cached / total_in * 100), 1) if total_in > 0 else 0.0
     avg_lat = (sum(m.latency_ms for m in metrics) / len(metrics)) if metrics else 0.0
 
     if project_id:
@@ -76,7 +78,9 @@ def get_finops_analytics(project_id: str | None = Query(None, description="Filtr
         "total_cost_usd": total_cost,
         "total_input_tokens": total_in,
         "total_output_tokens": total_out,
-        "total_cached_tokens": total_cache,
+        "total_reasoning_tokens": total_reasoning,
+        "total_cached_tokens": total_cached,
+        "cache_rate": cache_rate,
         "total_calls": len(metrics),
         "average_latency_ms": avg_lat,
         "budget_limit_usd": budget_limit,
@@ -137,6 +141,7 @@ def get_finops_summary():
             "agents_count": len(p_agents),
             "pct": p_pct,
             "quality_score": float(getattr(p, "quality_score", 0.0) or 0.0),
+            "budget_limit_usd": float(getattr(p, "budget_limit_usd", 10.0) or 10.0),
         })
 
     # Dépenses Studio / Cadrage hors projet
@@ -162,6 +167,7 @@ def get_finops_summary():
         "pct": studio_pct,
         "quality_score": 96,
         "is_studio": True,
+        "budget_limit_usd": 10.0,
     })
 
     projects_data.sort(key=lambda x: x["cost_usd"], reverse=True)
