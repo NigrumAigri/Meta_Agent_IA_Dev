@@ -3745,62 +3745,107 @@
             <!-- Carte 1 : Coût Total -->
             <div class="kpi-card">
               <div>
-                <div class="row between" style="margin-bottom:10px;align-items:center">
+                <div class="row between" style="margin-bottom:8px;align-items:center">
                   <span style="font-size:12px;font-weight:600;color:#D4D4D8;letter-spacing:0.2px">Coût Total</span>
                   <svg class="ic-s mut2"><use href="#i-wallet" /></svg>
                 </div>
-                <div class="mono" style="font-size:20px;font-weight:700;color:#22C55E;white-space:nowrap" id="gf-total-cost">$ 0.0000</div>
+                <div class="mono" style="font-size:22px;font-weight:700;color:#22C55E;white-space:nowrap" id="gf-total-cost">$ 0.0000</div>
               </div>
               <div class="kpi-footer">
-                <span id="gf-kpi-type-breakdown" class="mono" style="font-size:10px;color:#A1A1AA;white-space:nowrap">Meta: $ 0.0000 · Proj: $ 0.0000</span>
-                <span class="chip" style="font-size:10px;padding:1px 6px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="gf-kpi-scope-badge">Tous les projets</span>
+                <div style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:6px;flex-wrap:wrap">
+                  <div class="row gap1" style="font-size:11px;color:#A1A1AA;align-items:center">
+                    <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#A78BFA;margin-right:2px"></span>
+                    <span>Méta :</span>
+                    <b class="mono" style="color:#FAFAFA" id="gf-cost-meta">$ 0.0000</b>
+                  </div>
+                  <div class="row gap1" style="font-size:11px;color:#A1A1AA;align-items:center">
+                    <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#38BDF8;margin-right:2px"></span>
+                    <span>Projets :</span>
+                    <b class="mono" style="color:#FAFAFA" id="gf-cost-proj">$ 0.0000</b>
+                  </div>
+                </div>
               </div>
             </div>
 
             <!-- Carte 2 : Jetons Consommés -->
             <div class="kpi-card">
               <div>
-                <div class="row between" style="margin-bottom:10px;align-items:center">
+                <div class="row between" style="margin-bottom:8px;align-items:center">
                   <span style="font-size:12px;font-weight:600;color:#D4D4D8;letter-spacing:0.2px">Jetons Consommés</span>
                   <svg class="ic-s mut2"><use href="#i-stack" /></svg>
                 </div>
-                <div class="mono" style="font-size:20px;font-weight:700;color:#FAFAFA;white-space:nowrap" id="gf-total-tokens">0</div>
+                <div class="mono" style="font-size:22px;font-weight:700;color:#FAFAFA;white-space:nowrap" id="gf-total-tokens">0</div>
               </div>
-              <div class="kpi-footer" style="gap:4px;flex-wrap:wrap">
-                <span class="chip mono" style="font-size:9px;padding:1px 5px;white-space:nowrap;display:inline-flex;align-items:center;gap:3px" id="gf-tk-in" title="Jetons en entrée (Prompt)"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg><span id="gf-tk-in-val">In: 0</span></span>
-                <span class="chip mono" style="font-size:9px;padding:1px 5px;white-space:nowrap;display:inline-flex;align-items:center;gap:3px" id="gf-tk-out" title="Jetons générés en sortie"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#A78BFA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg><span id="gf-tk-out-val">Out: 0</span></span>
-                <span class="chip mono" style="font-size:9px;padding:1px 5px;white-space:nowrap;display:inline-flex;align-items:center;gap:3px" id="gf-tk-reasoning" title="Jetons de pensée / réflexion"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#F43F5E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z"/></svg><span id="gf-tk-reasoning-val">R: 0</span></span>
-                <span class="chip mono" style="font-size:9px;padding:1px 5px;white-space:nowrap;display:inline-flex;align-items:center;gap:3px" id="gf-tk-cache" title="Taux de cache OpenRouter (Prompt Caching)"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#10B981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span id="gf-tk-cache-val">Cache: 0%</span></span>
+              <div class="kpi-footer">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 8px;width:100%">
+                  <div class="row gap1" style="font-size:10px;color:#A1A1AA;align-items:center;min-width:0">
+                    <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                    <span style="white-space:nowrap">Entrée :</span>
+                    <span class="mono" style="color:#FAFAFA;font-weight:600" id="gf-tk-in-val">0</span>
+                  </div>
+                  <div class="row gap1" style="font-size:10px;color:#A1A1AA;align-items:center;min-width:0">
+                    <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="#A78BFA" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                    <span style="white-space:nowrap">Sortie :</span>
+                    <span class="mono" style="color:#FAFAFA;font-weight:600" id="gf-tk-out-val">0</span>
+                  </div>
+                  <div class="row gap1" style="font-size:10px;color:#A1A1AA;align-items:center;min-width:0">
+                    <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="#F43F5E" stroke-width="2" stroke-linecap="round" style="flex-shrink:0"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z"/></svg>
+                    <span style="white-space:nowrap">Pensée :</span>
+                    <span class="mono" style="color:#FAFAFA;font-weight:600" id="gf-tk-reasoning-val">0</span>
+                  </div>
+                  <div class="row gap1" style="font-size:10px;color:#A1A1AA;align-items:center;min-width:0">
+                    <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="#10B981" stroke-width="2.2" stroke-linecap="round" style="flex-shrink:0"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    <span style="white-space:nowrap">Cache :</span>
+                    <span class="mono" style="color:#10B981;font-weight:600" id="gf-tk-cache-val">0.0%</span>
+                  </div>
+                </div>
               </div>
             </div>
 
             <!-- Carte 3 : Appels aux IA -->
             <div class="kpi-card">
               <div>
-                <div class="row between" style="margin-bottom:10px;align-items:center">
+                <div class="row between" style="margin-bottom:8px;align-items:center">
                   <span style="font-size:12px;font-weight:600;color:#D4D4D8;letter-spacing:0.2px">Appels aux IA</span>
                   <svg class="ic-s mut2"><use href="#i-bolt" /></svg>
                 </div>
-                <div class="mono" style="font-size:20px;font-weight:700;color:#FAFAFA;white-space:nowrap" id="gf-total-calls">0</div>
+                <div class="mono" style="font-size:22px;font-weight:700;color:#FAFAFA;white-space:nowrap" id="gf-total-calls">0</div>
               </div>
               <div class="kpi-footer">
-                <span>Temps rép. moy.</span>
-                <span class="mono" style="color:#D4D4D8;font-size:11px" id="gf-avg-lat">0 ms</span>
+                <div style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:6px;flex-wrap:wrap">
+                  <div class="row gap1" style="font-size:11px;color:#A1A1AA;align-items:center">
+                    <svg class="ic-s" style="width:11px;height:11px;color:#A1A1AA"><use href="#i-clock"/></svg>
+                    <span>Latence :</span>
+                    <b class="mono" style="color:#FAFAFA" id="gf-avg-lat">0 ms</b>
+                  </div>
+                  <div class="row gap1" style="font-size:11px;color:#22C55E;align-items:center">
+                    <svg class="ic-s" style="width:11px;height:11px;color:#22C55E"><use href="#i-check"/></svg>
+                    <span style="color:#A1A1AA">Succès :</span>
+                    <b class="mono" style="color:#22C55E">100%</b>
+                  </div>
+                </div>
               </div>
             </div>
 
             <!-- Carte 4 : Budget Restant -->
             <div class="kpi-card">
               <div>
-                <div class="row between" style="margin-bottom:10px;align-items:center">
+                <div class="row between" style="margin-bottom:8px;align-items:center">
                   <span style="font-size:12px;font-weight:600;color:#D4D4D8;letter-spacing:0.2px">Budget Restant</span>
                   <svg class="ic-s mut2"><use href="#i-shield" /></svg>
                 </div>
-                <div class="mono" style="font-size:20px;font-weight:700;color:#FAFAFA;white-space:nowrap" id="gf-budget-remaining">$ 0.0000</div>
+                <div class="mono" style="font-size:22px;font-weight:700;color:#22C55E;white-space:nowrap" id="gf-budget-remaining">$ 0.0000</div>
               </div>
               <div class="kpi-footer">
-                <span>Disjoncteur</span>
-                <span class="mono" style="color:#A1A1AA;font-size:11px" id="gf-budget-sub">Plafond dynamique</span>
+                <div style="display:flex;flex-direction:column;gap:4px;width:100%">
+                  <div style="display:flex;align-items:center;justify-content:space-between;width:100%;font-size:11px">
+                    <span style="color:#A1A1AA">Plafond : <b class="mono" style="color:#FAFAFA" id="gf-budget-sub">$ 30.00</b></span>
+                    <span class="mono" style="font-size:10px;color:#22C55E;font-weight:600" id="gf-budget-pct">100% dispo</span>
+                  </div>
+                  <div class="bar" style="height:3px;background:#27272A;border-radius:2px;overflow:hidden">
+                    <i id="gf-budget-bar" style="width:100%;background:#22C55E;height:100%;display:block;transition:width .3s"></i>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -11590,10 +11635,8 @@
 
       const metaCost = txs.filter(t => isMetaAgent(t)).reduce((acc, t) => acc + (t.cost_usd || 0), 0);
       const projCost = txs.filter(t => !isMetaAgent(t)).reduce((acc, t) => acc + (t.cost_usd || 0), 0);
-      const typeBreakdownEl = $('#gf-kpi-type-breakdown');
-      if (typeBreakdownEl) {
-        typeBreakdownEl.textContent = `Meta: ${money(metaCost)} · Proj: ${money(projCost)}`;
-      }
+      const metaCostEl = $('#gf-cost-meta'); if (metaCostEl) metaCostEl.textContent = money(metaCost);
+      const projCostEl = $('#gf-cost-proj'); if (projCostEl) projCostEl.textContent = money(projCost);
       
       const fmtTk = n => {
         const num = Math.round(Number(n) || 0);
@@ -11602,40 +11645,43 @@
         if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
         return num.toString();
       };
-      const tkInValEl = $('#gf-tk-in-val'); if (tkInValEl) tkInValEl.textContent = `In: ${fmtTk(filteredIn)}`;
-      const tkOutValEl = $('#gf-tk-out-val'); if (tkOutValEl) tkOutValEl.textContent = `Out: ${fmtTk(filteredPureOut)}`;
-      const tkReasoningValEl = $('#gf-tk-reasoning-val'); if (tkReasoningValEl) tkReasoningValEl.textContent = `R: ${fmtTk(filteredReasoning)}`;
-      const tkCacheValEl = $('#gf-tk-cache-val'); if (tkCacheValEl) tkCacheValEl.textContent = `Cache: ${cacheRate}%`;
+      const tkInValEl = $('#gf-tk-in-val'); if (tkInValEl) tkInValEl.textContent = fmtTk(filteredIn);
+      const tkOutValEl = $('#gf-tk-out-val'); if (tkOutValEl) tkOutValEl.textContent = fmtTk(filteredPureOut);
+      const tkReasoningValEl = $('#gf-tk-reasoning-val'); if (tkReasoningValEl) tkReasoningValEl.textContent = fmtTk(filteredReasoning);
+      const tkCacheValEl = $('#gf-tk-cache-val'); if (tkCacheValEl) tkCacheValEl.textContent = `${cacheRate}%`;
       const callsEl = $('#gf-total-calls'); if (callsEl) callsEl.textContent = int(filteredCalls);
 
       // Calcul Budget & Disjoncteur (Multi-Projets vs Projet Dédié)
       const budEl = $('#gf-budget-remaining');
       const budSubEl = $('#gf-budget-sub');
+      const budPctEl = $('#gf-budget-pct');
+      const budBarEl = $('#gf-budget-bar');
       const projectsList = data.projects_breakdown || [];
 
+      let totalAllocated = 0.0;
       if (projFilter === 'all') {
-        const totalAllocated = projectsList.reduce((acc, p) => acc + (p.budget_limit_usd || 0.0), 0) || (state.projects.reduce((acc, p) => acc + (p.budget_limit_usd || 0.0), 0) || 0.0);
-        const remaining = Math.max(0, totalAllocated - filteredCost);
-        if (budEl) budEl.textContent = money(remaining);
-        if (budSubEl) budSubEl.textContent = `Plafond total : ${money(totalAllocated)}`;
+        totalAllocated = projectsList.reduce((acc, p) => acc + (p.budget_limit_usd || 0.0), 0) || (state.projects.reduce((acc, p) => acc + (p.budget_limit_usd || 0.0), 0) || 0.0);
       } else {
         const selectedProj = projectsList.find(p => p.id === projFilter) || (state.projects || []).find(p => p.id === projFilter);
-        const projBudget = selectedProj ? (selectedProj.budget_limit_usd || 0.0) : 0.0;
-        const remaining = Math.max(0, projBudget - filteredCost);
-        if (budEl) budEl.textContent = money(remaining);
-        if (budSubEl) budSubEl.textContent = `Plafond : ${money(projBudget)}`;
+        totalAllocated = selectedProj ? (selectedProj.budget_limit_usd || 0.0) : 0.0;
       }
+      const remaining = Math.max(0, totalAllocated - filteredCost);
+      const pctRemaining = totalAllocated > 0 ? Math.max(0, Math.min(100, (remaining / totalAllocated) * 100)) : 100;
+
+      if (budEl) budEl.textContent = money(remaining);
+      if (budSubEl) budSubEl.textContent = money(totalAllocated);
+      if (budPctEl) budPctEl.textContent = `${pctRemaining.toFixed(1)}% dispo`;
+      if (budBarEl) budBarEl.style.width = `${pctRemaining}%`;
 
       const avgLat = txs.length > 0 ? Math.round(txs.reduce((acc, t) => acc + (t.latency_ms || 0), 0) / txs.length) : 0;
-      const latEl = $('#gf-avg-lat'); if (latEl) latEl.textContent = avgLat > 0 ? `~${avgLat} ms` : '0 ms';
-
-      const scopeBadgeEl = $('#gf-kpi-scope-badge');
-      if (scopeBadgeEl) {
-        if (projFilter !== 'all') {
-          const selectedProj = (data.projects_breakdown || []).find(p => p.id === projFilter);
-          scopeBadgeEl.textContent = selectedProj ? selectedProj.name : 'Projet filtré';
+      const latEl = $('#gf-avg-lat');
+      if (latEl) {
+        if (avgLat >= 1000) {
+          latEl.textContent = `${(avgLat / 1000).toFixed(1)} s`;
+        } else if (avgLat > 0) {
+          latEl.textContent = `${avgLat} ms`;
         } else {
-          scopeBadgeEl.textContent = 'Tous les projets';
+          latEl.textContent = '0 ms';
         }
       }
 

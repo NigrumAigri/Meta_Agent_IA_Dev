@@ -15,6 +15,12 @@ Toutes les modifications notables apportées à ce projet sont documentées dans
   - Épuration de la topbar : retrait du compteur flottant de dépenses (`#topbar-cost-display`) pour une interface plus épurée et sans redondance, avec accès direct conservé au Centre des Dépenses.
   - Correction du filtrage multi-projets dans le Centre des Dépenses avec réinjection de `project_id`.
   - Suppression de l'enregistrement de fausses transactions en cas de repli local hors-ligne.
+- **Refonte Visuelle & Équilibrage Parfait des Cartes KPI FinOps (`static/index.html`)** :
+  - **Carte 1 (Coût Total)** : Retrait du badge redondant « Tous les projets », remplacement de l'abréviation « Proj » par le libellé complet « Projets » et affichage soigné avec pastilles indicatrices colorées (`● Méta : $ ...` en violet, `● Projets : $ ...` en bleu).
+  - **Carte 2 (Jetons Consommés)** : Remplacement des puces disparates par une grille 2x2 parfaitement équilibrée aux libellés explicites en français (`Entrée`, `Sortie`, `Pensée`, `Cache`) accompagnés d'icônes vectorielles SVG.
+  - **Carte 3 (Appels aux IA)** : Élimination de l'espace vide inférieur via l'affichage harmonieux côte-à-côte de la latence moyenne formatée intelligemment (`12.5 s` ou `ms`) et du taux de succès (`100%`).
+  - **Carte 4 (Budget Restant)** : Intégration d'une micro-barre de progression budgétaire vectorielle dynamique (`gf-budget-bar`) avec affichage du plafond et du pourcentage de budget disponible (`% dispo`).
+  - **Symétrie & Split-Screen** : Harmonisation des hauteurs et des espacements pour un rendu 2x2 irréprochable et équilibré lors de la scission d'écran en deux (~947px).
 - **Centre des Dépenses & Budget : Sélecteur de Dates Calendrier, Bouton Actualiser & Épuration UI (`static/index.html`, `api/routes/finops.py`)** :
   - **Retrait du badge SQLite** : Suppression définitive de l'étiquette technique « SQLite WAL En Ligne » dans l'en-tête du Centre des Dépenses pour une interface plus claire et axée métier.
   - **Bouton Actualiser Interactif** : Remplacement par une icône SVG vectorielle circulaire avec micro-animation de rotation fluide (`.spinning`), rechargement asynchrone sécurisé du grand livre et de la télémétrie latérale, désactivation temporaire anti-rebond et notification toast de confirmation.
