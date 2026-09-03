@@ -15,6 +15,11 @@ Toutes les modifications notables apportées à ce projet sont documentées dans
   - Épuration de la topbar : retrait du compteur flottant de dépenses (`#topbar-cost-display`) pour une interface plus épurée et sans redondance, avec accès direct conservé au Centre des Dépenses.
   - Correction du filtrage multi-projets dans le Centre des Dépenses avec réinjection de `project_id`.
   - Suppression de l'enregistrement de fausses transactions en cas de repli local hors-ligne.
+- **Typologie FinOps & Séparation Stricte Meta-Concepteurs vs Agents Projet (`api/routes/finops.py`, `static/index.html`)** :
+  - Ajout d'une colonne dédiée `Typologie` dans le Journal d'Audit des Inférences IA pour distinguer instantanément les inférences des 6 Méta-Agents (`Meta-Concepteur`) de celles des sous-agents du projet (`Agent Projet`), dans un design sobre et 100% sans emoji.
+  - Simplification de l'intitulé de colonne `Projet / Studio` ramené proprement à `Projet`.
+  - Retrait de `Studio & Inception Globale (Hors Projets)` du menu déroulant des projets pour ne conserver que la liste des vrais projets opérationnels.
+  - Ajout du filtre multi-critères `Typologie` et affichage du sous-total en temps réel (`Meta: $ X.XXXX · Proj: $ Y.YYYY`).
 - **Architecture à 4 Calques Stricts & Résolution Totale des Superpositions sur le Canvas 2D (`static/index.html`)** :
   - **Calque 1 (Fond, `z-index: 1`)** : Câbles et flux SVG (`#wires`) sur le plancher du canvas.
   - **Calque 2 (Liaisons, `z-index: 5`)** : Badges de liaisons (`#wire-badges`) et symboles de hiérarchie (`⇣`, `→`, molette, croix) placés strictement SOUS les cartes.

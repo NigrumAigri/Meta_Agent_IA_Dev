@@ -174,6 +174,9 @@ def get_finops_summary():
     ]
     agents_data.sort(key=lambda x: x["cost_usd"], reverse=True)
 
+    core_agent_ids = {a.id for a in all_agents if getattr(a, "is_core_meta_agent", False)}
+    core_system_ids = {"agent_architect", "agent_coder", "agent_model_matcher", "agent_finops_guardian", "agent_copilot", "agent_quality_judge"}
+
     # 3. Dernières transactions réelles
     recent_transactions = [
         {
@@ -183,6 +186,7 @@ def get_finops_summary():
             "project_name": project_id_to_name.get(m.project_id, "Studio"),
             "agent_id": m.agent_id,
             "agent_name": agent_id_to_name.get(m.agent_id, m.agent_name or m.agent_id),
+            "is_core_meta_agent": bool(m.agent_id in core_agent_ids or m.agent_id in core_system_ids),
             "model": m.model or "moonshotai/kimi-k3",
             "prompt_tokens": m.prompt_tokens,
             "completion_tokens": m.completion_tokens,
@@ -190,7 +194,7 @@ def get_finops_summary():
             "cost_usd": m.cost_usd,
             "latency_ms": m.latency_ms,
         }
-        for m in reversed(all_metrics[-20:])
+        for m in reversed(all_metrics[-50:])
     ]
 
     total_budget = sum(p.budget_limit_usd for p in all_projects) if all_projects else 0.0
